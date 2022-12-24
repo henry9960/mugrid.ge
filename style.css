@@ -1,0 +1,28 @@
+* {
+    box-sizing: border-box; /*ALWAYS USE THIS!!!!!!*/
+    margin: 0;
+    padding: 0;
+  }
+  
+  a {
+    color: var(--main-text);
+    text-decoration: none;
+  }
+  
+  body {
+    background-color: var(--white-bg);
+    color: var(--main-text);
+    font-family: "Poppins", sans-serif;
+  }
+
+  input {
+    border-style: none;
+    outline: none;
+  }
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
