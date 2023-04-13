@@ -16,12 +16,14 @@
 a { /* Adjust links also known as anchors. */
   color: var(--main-text);
   text-decoration: none;
+  
 }
   
 body { /* Adjusts CSS for all of the body. */
   background-color: var(--black-bg);
   color: var(--main-text);
   font-family: "Poppins", sans-serif;
+  
 }
 
 input { /* Resets input boxes CSS. */
@@ -38,20 +40,23 @@ input[type="search"]::-webkit-search-results-decoration {
 
 /* -- INTRO BOX HEADER STUFF!!! -- */
 
-.intro-box-header {
-  margin-left: 300px;
-  margin-top: 300px;
+.body-container {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+  width: 80vw;
 }
 
 .intro-box-header h1 {
-    font-size: 100px;
-    font-weight: 300;
+  font-size: 100px;
+  font-weight: 300;
 }
 
 .intro-box-header p {
   font-size: 50px;
   font-weight: 400;
-  margin-top: -10px;
+  margin-top: -20px;
 }
 
 /* -- SOCIAL BUTTONS STUFF!!! -- */
@@ -59,7 +64,7 @@ input[type="search"]::-webkit-search-results-decoration {
 .social-buttons-container {
   background-color: #5474b4;
   font-size: 18px;
-  margin-left: 300px;
+  margin-left: -590px;
   padding-left: 9px;
   width: 175px;
 }
@@ -67,7 +72,6 @@ input[type="search"]::-webkit-search-results-decoration {
 .linkedin-button {
   padding-right: 5px;
 }
-
 .linkedin-button:hover {
   color: #000000;
 }
@@ -75,9 +79,114 @@ input[type="search"]::-webkit-search-results-decoration {
 .github-button {
   padding-left: 5px;
 }
-
 .github-button:hover {
   color: #000000;
 }
 
 /* -- ... !!! -- */
+
+.flex {
+  display: flex;
+}
+
+/* -- MEDIA QUERIES!!! -- */
+@media screen and (max-width: 1150px) {
+  .intro-box-header h1 {
+    font-size: 90px;
+  }
+  
+  .intro-box-header p {
+    font-size: 45px;
+    margin-top: -20px;
+  }
+
+  .social-buttons-container {
+    font-size: 17px;
+    margin-left: -520px;
+    padding-left: 7px;
+    padding-right: 7px;
+    width: max-content;
+  }
+}
+
+@media screen and (max-width: 950px) {
+  .intro-box-header h1 {
+    font-size: 80px;
+  }
+  
+  .intro-box-header p {
+    font-size: 40px;
+    margin-top: -15px;
+  }
+
+  .social-buttons-container {
+    font-size: 16px;
+    margin-left: -457px;
+    padding-left: 7px;
+    padding-right: 7px;
+    width: max-content;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .intro-box-header h1 {
+    font-size: 70px;
+  }
+  
+  .intro-box-header p {
+    font-size: 30px;
+    margin-top: -15px;
+  }
+
+  .social-buttons-container {
+    font-size: 14px;
+    margin-left: -398px;
+    padding-left: 7px;
+    padding-right: 7px;
+    width: max-content;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .intro-box-header h1 {
+    font-size: 50px;
+  }
+  
+  .intro-box-header p {
+    display: none;
+  }
+
+  .social-buttons-container {
+    font-size: 15px;
+    margin-left: -247px;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: max-content;
+  }
+
+  .body-container {
+    width: 100vw;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .intro-box-header h1 {
+    font-size: 40px;
+  }
+  
+  .intro-box-header p {
+    display: none;
+  }
+
+  .social-buttons-container {
+    font-size: 13px;
+    margin-left: -179px;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: max-content;
+  }
+
+  .body-container {
+    width: 100vw;
+  }
+}
