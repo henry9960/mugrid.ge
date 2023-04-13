@@ -145,6 +145,10 @@ input[type="search"]::-webkit-search-results-decoration {
     padding-right: 7px;
     width: max-content;
   }
+    
+  .body-container {
+    width: 100vw;
+  }
 }
 
 @media screen and (max-width: 700px) {
