@@ -1,0 +1,218 @@
+/* -- MISC -- */
+:root {
+    --black-bg: rgb(0, 0, 0);
+    --dark-gray-bg: rgb(231, 231, 231);
+    --main-text: rgb(255, 255, 255);
+    --black-text: #000000;
+    --important-buttons: #3577ff;
+}
+
+* { /* Page reset to default, always use. */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+  
+a { /* Adjust links also known as anchors. */
+  color: var(--main-text);
+  text-decoration: none;
+  
+}
+  
+body { /* Adjusts CSS for all of the body. */
+  background-color: var(--black-bg);
+  color: var(--main-text);
+  font-family: "Poppins", sans-serif;
+  
+}
+
+input { /* Resets input boxes CSS. */
+  border-style: none;
+  outline: none;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+
+/* -- LOADER STUFF!!! -- */
+
+.loader-container {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+}
+
+.loader img {
+  height: 20vh;
+  border-radius: 50%;
+  animation: spinningLoader 4s linear infinite;
+}
+  @keyframes spinningLoader {
+    50% {
+      transform: rotate(360deg);
+    }
+}
+
+/* -- INTRO BOX HEADER STUFF!!! -- */
+
+.body-container {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+  width: 80vw;
+}
+
+.intro-box-header h1 {
+  font-size: 100px;
+  font-weight: 300;
+}
+
+.intro-box-header p {
+  font-size: 50px;
+  font-weight: 400;
+  margin-top: -20px;
+}
+
+/* -- SOCIAL BUTTONS STUFF!!! -- */
+
+.social-buttons-container {
+  background-color: #5474b4;
+  font-size: 18px;
+  margin-left: -590px;
+  padding-left: 9px;
+  width: 175px;
+}
+
+.linkedin-button {
+  padding-right: 5px;
+}
+.linkedin-button:hover {
+  color: #000000;
+}
+
+.github-button {
+  padding-left: 5px;
+}
+.github-button:hover {
+  color: #000000;
+}
+
+/* -- ... !!! -- */
+
+.flex {
+  display: flex;
+}
+
+/* -- MEDIA QUERIES!!! -- */
+@media screen and (max-width: 1150px) {
+  .intro-box-header h1 {
+    font-size: 90px;
+  }
+  
+  .intro-box-header p {
+    font-size: 45px;
+    margin-top: -20px;
+  }
+
+  .social-buttons-container {
+    font-size: 17px;
+    margin-left: -520px;
+    padding-left: 7px;
+    padding-right: 7px;
+    width: max-content;
+  }
+}
+
+@media screen and (max-width: 950px) {
+  .intro-box-header h1 {
+    font-size: 80px;
+  }
+  
+  .intro-box-header p {
+    font-size: 40px;
+    margin-top: -15px;
+  }
+
+  .social-buttons-container {
+    font-size: 16px;
+    margin-left: -457px;
+    padding-left: 7px;
+    padding-right: 7px;
+    width: max-content;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .intro-box-header h1 {
+    font-size: 70px;
+  }
+  
+  .intro-box-header p {
+    font-size: 30px;
+    margin-top: -15px;
+  }
+
+  .social-buttons-container {
+    font-size: 14px;
+    margin-left: -398px;
+    padding-left: 7px;
+    padding-right: 7px;
+    width: max-content;
+  }
+    
+  .body-container {
+    width: 100vw;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .intro-box-header h1 {
+    font-size: 50px;
+  }
+  
+  .intro-box-header p {
+    display: none;
+  }
+
+  .social-buttons-container {
+    font-size: 15px;
+    margin-left: -247px;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: max-content;
+  }
+
+  .body-container {
+    width: 100vw;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .intro-box-header h1 {
+    font-size: 40px;
+  }
+  
+  .intro-box-header p {
+    display: none;
+  }
+
+  .social-buttons-container {
+    font-size: 13px;
+    margin-left: -179px;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: max-content;
+  }
+
+  .body-container {
+    width: 100vw;
+  }
+}
