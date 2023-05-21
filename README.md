@@ -1,2 +1,2 @@
 # My personal website.
-This is my personal project where I am creating a personal website for myself.
+This is where I'm building my personal website, it is currently at V2 :).
