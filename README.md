@@ -12,3 +12,4 @@ Photo of how V1 looked like : https://cdn.discordapp.com/attachments/83453657990
     ig.mugrid.ge
     linkedin.mugrid.ge
     github.mugrid.ge
+- Media queries & make the site responsiveee.
