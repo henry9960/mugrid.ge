@@ -15,7 +15,7 @@ const config: Config = {
       },
       colors: {
         card: '#F7F7F9',
-        canvas: '#EDEDED',
+        canvas: '#FFFFFF',
       },
       spacing: {
         '18': '72px',

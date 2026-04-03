@@ -6,7 +6,7 @@ import ContactSection from '@/components/sections/ContactSection'
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[#EDEDED]">
+    <main className="min-h-screen bg-white">
       <Navbar />
       <div className="max-w-[1200px] mx-auto px-8">
         <section id="home" className="pt-24 pb-4">
