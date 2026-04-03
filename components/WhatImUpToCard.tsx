@@ -92,15 +92,8 @@ export default function WhatImUpToCard() {
       ))}
 
       {/* ── Header ───────────────────────────────────────── */}
-      <div className="flex items-center justify-between relative z-10">
+      <div className="relative z-10">
         <h2 className="text-2xl font-semibold text-white">What I&apos;m up to</h2>
-        <span
-          className="inline-flex items-center gap-1.5 text-[10px] font-semibold rounded-full px-2.5 py-1"
-          style={{ backgroundColor: 'rgba(167,243,208,0.15)', color: '#a7f3d0' }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full inline-block animate-pulse" style={{ backgroundColor: '#34d399' }} />
-          Now
-        </span>
       </div>
 
       <hr className="relative z-10" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
@@ -115,9 +108,18 @@ export default function WhatImUpToCard() {
             <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#00A4EF' }} />
             <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#FFB900' }} />
           </div>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            Microsoft · Summer 2026
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              Microsoft · Summer 2026
+            </p>
+            <span
+              className="inline-flex items-center gap-1.5 text-[10px] font-semibold rounded-full px-2.5 py-1"
+              style={{ backgroundColor: 'rgba(167,243,208,0.15)', color: '#a7f3d0' }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full inline-block animate-pulse" style={{ backgroundColor: '#34d399' }} />
+              Now
+            </span>
+          </div>
         </div>
         <p className="text-xs mt-3 leading-relaxed" style={{ color: 'rgba(255,255,255,0.38)' }}>
           WIP — add a one-liner about what you&apos;re working on here.
