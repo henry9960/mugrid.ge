@@ -1,20 +1,3 @@
-const EXPERIENCES = [
-  {
-    company: 'Microsoft',
-    role: 'Product Manager Intern',
-    description: 'Working on AI products.',
-    period: 'Summer 2026',
-    current: true,
-  },
-]
-
-const NOW_ITEMS = [
-  { label: 'Learning', value: 'Vibecoding and using Claude!' },
-  { label: 'Reading', value: 'wip' },
-  { label: 'Listening to', value: 'wip' },
-  { label: 'Location', value: 'London, UK' },
-]
-
 function Divider() {
   return <hr className="border-t border-[#E4E4E8] my-3" />
 }
@@ -38,7 +21,6 @@ export default function HomeSection() {
                 Product Manager &amp; Student
               </p>
             </div>
-            {/* Avatar placeholder */}
             <div className="w-14 h-14 rounded-full bg-[#E4E4E8] flex-shrink-0 mt-1" />
           </div>
 
@@ -64,50 +46,51 @@ export default function HomeSection() {
         </div>
       </div>
 
-      {/* ── Right side: 2×2 square grid ──────────────── */}
+      {/* ── Right side grid ───────────────────────────── */}
       <div className="col-span-12 md:col-span-5 grid grid-cols-2 gap-4">
 
-        {/* Experience */}
-        <div className="bg-[#F7F7F9] rounded-3xl p-5 aspect-square flex flex-col justify-between">
-          <div>
-            <h2 className="text-base font-semibold text-[#0A0A0A]">Experience</h2>
-            <Divider />
-            <div className="space-y-3">
-              {EXPERIENCES.map((exp) => (
-                <div key={exp.company}>
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <p className="text-xs font-semibold text-[#0A0A0A]">{exp.company}</p>
-                    {exp.current && (
-                      <span
-                        className="text-[9px] font-semibold rounded-full px-1.5 py-0.5"
-                        style={{ color: '#3A7D44', backgroundColor: '#EDFAF1' }}
-                      >
-                        Now
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-[#8A8A8A] mt-0.5">{exp.role}</p>
-                  <p className="text-[10px] text-[#ABABAB] mt-0.5">{exp.period}</p>
-                </div>
-              ))}
+        {/* Currently — spans full width */}
+        <div className="col-span-2 bg-[#F7F7F9] rounded-3xl p-5 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold text-[#0A0A0A]">Currently</h2>
+            <span
+              className="inline-flex items-center gap-1.5 text-[10px] font-semibold rounded-full px-2 py-1"
+              style={{ color: '#3A7D44', backgroundColor: '#EDFAF1' }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3A7D44] inline-block" />
+              Now
+            </span>
+          </div>
+
+          <Divider />
+
+          {/* Microsoft internship — hero */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-2xl font-semibold text-[#0A0A0A] leading-none">Microsoft</p>
+              <p className="text-sm text-[#6B6B6B] mt-1">Product Manager Intern</p>
+              <p className="text-xs text-[#ABABAB] mt-0.5">Summer 2026</p>
+            </div>
+            {/* Microsoft logo mark */}
+            <div className="grid grid-cols-2 gap-[3px] flex-shrink-0">
+              <div className="w-5 h-5 rounded-[3px]" style={{ backgroundColor: '#F25022' }} />
+              <div className="w-5 h-5 rounded-[3px]" style={{ backgroundColor: '#7FBA00' }} />
+              <div className="w-5 h-5 rounded-[3px]" style={{ backgroundColor: '#00A4EF' }} />
+              <div className="w-5 h-5 rounded-[3px]" style={{ backgroundColor: '#FFB900' }} />
             </div>
           </div>
-        </div>
 
-        {/* Now */}
-        <div className="bg-[#F7F7F9] rounded-3xl p-5 aspect-square flex flex-col justify-between">
-          <div>
-            <h2 className="text-base font-semibold text-[#0A0A0A]">Now</h2>
-            <Divider />
-            <div className="space-y-2">
-              {NOW_ITEMS.map((item) => (
-                <div key={item.label}>
-                  <p className="text-[9px] font-semibold uppercase tracking-widest text-[#ABABAB]">
-                    {item.label}
-                  </p>
-                  <p className="text-[11px] text-[#0A0A0A] mt-0.5 leading-snug">{item.value}</p>
-                </div>
-              ))}
+          <Divider />
+
+          {/* Meta row */}
+          <div className="flex gap-6">
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-[#ABABAB] mb-0.5">Learning</p>
+              <p className="text-xs text-[#0A0A0A]">Vibecoding and using Claude!</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-[#ABABAB] mb-0.5">Location</p>
+              <p className="text-xs text-[#0A0A0A]">London, UK</p>
             </div>
           </div>
         </div>
