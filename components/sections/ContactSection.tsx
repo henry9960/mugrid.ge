@@ -1,9 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 
-/* ── Reusable platform card ──────────────────────────── */
+/* ── Platform card (square) ───────────────────────────── */
 function PlatformCard({
   platform,
   handle,
@@ -20,155 +19,116 @@ function PlatformCard({
   const [hovered, setHovered] = useState(false)
 
   const hoverStyle: React.CSSProperties =
-    typeof hoverBg === 'string'
-      ? { backgroundColor: hoverBg }
-      : hoverBg
+    typeof hoverBg === 'string' ? { backgroundColor: hoverBg } : hoverBg
 
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`bg-[#F7F7F9] rounded-3xl p-6 flex flex-col justify-between cursor-pointer no-underline ${className}`}
+      className={`bg-[#F7F7F9] rounded-3xl p-6 flex flex-col justify-between no-underline aspect-square ${className}`}
       style={{
-        transition: 'background 0.18s ease-out, box-shadow 0.18s ease-out',
+        transition: 'background 0.18s ease-out',
         ...(hovered ? hoverStyle : {}),
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      <h2
+        className="text-2xl font-semibold"
+        style={{ color: hovered ? '#ffffff' : '#0A0A0A', transition: 'color 0.18s ease-out' }}
+      >
+        {platform}
+      </h2>
       <div>
-        <h2
-          className="text-2xl font-semibold"
-          style={{
-            color: hovered ? '#ffffff' : '#0A0A0A',
-            transition: 'color 0.18s ease-out',
-          }}
-        >
-          {platform}
-        </h2>
         <hr
-          className="my-4 border-t"
+          className="border-t mb-3"
           style={{
             borderColor: hovered ? 'rgba(255,255,255,0.2)' : '#E4E4E8',
             transition: 'border-color 0.18s ease-out',
           }}
         />
-        <p
-          className="text-sm"
-          style={{
-            color: hovered ? 'rgba(255,255,255,0.75)' : '#6B6B6B',
-            transition: 'color 0.18s ease-out',
-          }}
-        >
-          {handle}
-        </p>
+        <div className="flex items-center justify-between">
+          <p
+            className="text-sm"
+            style={{ color: hovered ? 'rgba(255,255,255,0.75)' : '#6B6B6B', transition: 'color 0.18s ease-out' }}
+          >
+            {handle}
+          </p>
+          <span
+            className="text-xs"
+            style={{ color: hovered ? 'rgba(255,255,255,0.5)' : '#ABABAB', transition: 'color 0.18s ease-out' }}
+          >
+            →
+          </span>
+        </div>
       </div>
-      <p
-        className="text-xs mt-4"
-        style={{
-          color: hovered ? 'rgba(255,255,255,0.5)' : '#ABABAB',
-          transition: 'color 0.18s ease-out',
-        }}
-      >
-        View profile →
-      </p>
     </a>
   )
 }
 
-/* ── Email compose card ───────────────────────────────── */
+/* ── Email card (square, coloured) ───────────────────────── */
 function EmailCard({ className = '' }: { className?: string }) {
-  const [composing, setComposing] = useState(false)
-  const [subject, setSubject] = useState('')
-  const [message, setMessage] = useState('')
+  const [copied, setCopied] = useState(false)
+  const email = 'harry@mugrid.ge'
 
-  const mailtoHref = `mailto:harry@mugrid.ge?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`
+  const handleCopy = (e: React.MouseEvent) => {
+    e.preventDefault()
+    navigator.clipboard.writeText(email).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   return (
-    <div className={`bg-[#F7F7F9] rounded-3xl p-6 ${className}`}>
-      <div className="flex items-start justify-between">
-        <h2 className="text-2xl font-semibold text-[#0A0A0A]">Email</h2>
-        {!composing && (
-          <button
-            onClick={() => setComposing(true)}
-            className="text-xs font-medium text-[#0A0A0A] bg-[#EDEDED] rounded-full px-3 py-1.5 hover:bg-[#E4E4E8] transition-colors duration-150 flex-shrink-0"
-          >
-            Compose →
-          </button>
-        )}
+    <div
+      className={`rounded-3xl p-6 flex flex-col justify-between aspect-square ${className}`}
+      style={{ backgroundColor: '#0A0A0A' }}
+    >
+      {/* Top */}
+      <div>
+        <h2 className="text-2xl font-semibold text-white">Email</h2>
+        <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
+          {email}
+        </p>
       </div>
 
-      <hr className="border-t border-[#E4E4E8] my-4" />
+      {/* Bottom CTAs */}
+      <div className="space-y-2">
+        <a
+          href={`mailto:${email}`}
+          className="flex items-center justify-between w-full rounded-2xl px-4 py-3 no-underline group"
+          style={{ backgroundColor: 'rgba(255,255,255,0.08)', transition: 'background 0.15s ease-out' }}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.14)')}
+          onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)')}
+        >
+          <span className="text-sm font-medium text-white">Open mail app</span>
+          <span className="text-white opacity-50">↗</span>
+        </a>
 
-      <p className="text-sm text-[#6B6B6B] mb-4">harry@mugrid.ge</p>
-
-      <AnimatePresence>
-        {composing && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="overflow-hidden"
-          >
-            <div className="space-y-3 pb-1">
-              <div>
-                <label className="text-[10px] font-semibold uppercase tracking-widest text-[#ABABAB] block mb-1.5">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  placeholder="What's on your mind?"
-                  className="w-full bg-[#EDEDED] rounded-xl px-3 py-2 text-sm text-[#0A0A0A] placeholder-[#C0C0C4] outline-none focus:ring-2 focus:ring-black/10 transition-shadow"
-                />
-              </div>
-              <div>
-                <label className="text-[10px] font-semibold uppercase tracking-widest text-[#ABABAB] block mb-1.5">
-                  Message
-                </label>
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Your message..."
-                  rows={4}
-                  className="w-full bg-[#EDEDED] rounded-xl px-3 py-2 text-sm text-[#0A0A0A] placeholder-[#C0C0C4] outline-none focus:ring-2 focus:ring-black/10 transition-shadow resize-none"
-                />
-              </div>
-              <div className="flex gap-2">
-                <a
-                  href={mailtoHref}
-                  className="flex-1 text-center text-sm font-semibold text-white bg-[#0A0A0A] rounded-xl py-2 hover:bg-[#2A2A2A] transition-colors duration-150 no-underline"
-                >
-                  Open in Mail →
-                </a>
-                <button
-                  onClick={() => { setComposing(false); setSubject(''); setMessage('') }}
-                  className="text-sm text-[#6B6B6B] bg-[#EDEDED] hover:bg-[#E4E4E8] rounded-xl px-4 py-2 transition-colors duration-150"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {!composing && (
-        <p className="text-xs text-[#ABABAB]">Usually responds within 48 hours</p>
-      )}
+        <button
+          onClick={handleCopy}
+          className="flex items-center justify-between w-full rounded-2xl px-4 py-3"
+          style={{ backgroundColor: 'rgba(255,255,255,0.08)', transition: 'background 0.15s ease-out' }}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.14)')}
+          onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)')}
+        >
+          <span className="text-sm font-medium text-white">
+            {copied ? 'Copied!' : 'Copy address'}
+          </span>
+          <span className="text-white opacity-50 text-xs">{copied ? '✓' : '⎘'}</span>
+        </button>
+      </div>
     </div>
   )
 }
 
-/* ── GitHub coming soon card ──────────────────────────── */
+/* ── GitHub coming soon (square) ─────────────────────────── */
 function GitHubCard({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`bg-[#F7F7F9] rounded-3xl p-6 ${className}`}
-      style={{ opacity: 0.45, pointerEvents: 'none', userSelect: 'none' }}
+      className={`bg-[#F7F7F9] rounded-3xl p-6 flex flex-col justify-between aspect-square ${className}`}
+      style={{ opacity: 0.4, pointerEvents: 'none', userSelect: 'none' }}
     >
       <div className="flex items-start justify-between">
         <h2 className="text-2xl font-semibold text-[#0A0A0A]">GitHub</h2>
@@ -176,14 +136,18 @@ function GitHubCard({ className = '' }: { className?: string }) {
           Soon
         </span>
       </div>
-      <hr className="border-t border-[#E4E4E8] my-4" />
-      <p className="text-sm text-[#6B6B6B]">@henry9960</p>
-      <p className="text-xs text-[#ABABAB] mt-4">View profile →</p>
+      <div>
+        <hr className="border-t border-[#E4E4E8] mb-3" />
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-[#6B6B6B]">@henry9960</p>
+          <span className="text-xs text-[#ABABAB]">→</span>
+        </div>
+      </div>
     </div>
   )
 }
 
-/* ── Section ──────────────────────────────────────────── */
+/* ── Section ──────────────────────────────────────────────── */
 export default function ContactSection() {
   return (
     <div className="grid grid-cols-12 gap-4">
@@ -204,8 +168,8 @@ export default function ContactSection() {
             'linear-gradient(135deg, #833AB4 0%, #C13584 35%, #E1306C 55%, #FD1D1D 78%, #FCB045 100%)',
         }}
       />
-      <EmailCard className="col-span-12 md:col-span-6" />
-      <GitHubCard className="col-span-12 md:col-span-4" />
+      <EmailCard className="col-span-12 md:col-span-3" />
+      <GitHubCard className="col-span-12 md:col-span-3" />
     </div>
   )
 }
