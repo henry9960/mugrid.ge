@@ -49,10 +49,10 @@ export default function HomeSection() {
       {/* ── Right side grid ───────────────────────────── */}
       <div className="col-span-12 md:col-span-5 grid grid-cols-2 gap-4">
 
-        {/* Currently — spans full width */}
+        {/* What I'm up to — spans full width */}
         <div className="col-span-2 bg-[#F7F7F9] rounded-3xl p-5 flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-[#0A0A0A]">Currently</h2>
+            <h2 className="text-2xl font-semibold text-[#0A0A0A]">What I&apos;m up to</h2>
             <span
               className="inline-flex items-center gap-1.5 text-[10px] font-semibold rounded-full px-2 py-1"
               style={{ color: '#3A7D44', backgroundColor: '#EDFAF1' }}
@@ -84,10 +84,8 @@ export default function HomeSection() {
             </div>
           </div>
 
-          <Divider />
-
-          {/* Meta row */}
-          <div className="flex gap-6">
+          {/* Meta row — flush to bottom, no divider */}
+          <div className="grid grid-cols-2 pt-1">
             <div>
               <p className="text-[9px] font-semibold uppercase tracking-widest text-[#ABABAB] mb-0.5">Learning</p>
               <p className="text-xs text-[#0A0A0A]">Vibecoding and using Claude!</p>
