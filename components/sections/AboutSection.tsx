@@ -1,51 +1,57 @@
 const ABOUT_BLOCKS = [
   {
     label: 'Background',
-    text: 'Grew up in London. Studied Computer Science & Design at UCL, where I spent too much time in the library reading design manifestos and not enough time sleeping.',
+    text: 'WIP',
   },
   {
     label: 'Past',
-    text: 'Started at small startups where I wore every hat — research, design, a little frontend. Moved to larger companies to learn what craft at scale really means.',
+    text: 'WIP',
   },
   {
     label: 'Present',
-    text: 'Working at Anthropic on interfaces for AI products. Thinking about how design changes when the content is dynamic, uncertain, and collaborative.',
+    text: 'WIP',
   },
   {
     label: 'Future',
-    text: 'Build something of my own. Explore the intersection of AI and creative tools. Make things that help people think more clearly.',
+    text: 'WIP',
   },
   {
     label: 'Hobbies',
-    text: 'Running long distances. Hunting for good coffee. Vintage synthesisers. Cooking elaborate meals on Sunday evenings.',
+    text: 'WIP',
   },
 ]
 
 const TIMELINE = [
   {
-    company: 'Anthropic',
-    role: 'Product Designer',
-    description: 'AI interfaces at the frontier',
-    period: '2024 – Present',
+    company: 'Microsoft',
+    role: 'Product Manager Intern',
+    description: 'Working on MSAI products',
+    period: 'Summer 2026',
     current: true,
   },
   {
-    company: 'Linear',
-    role: 'Product Designer',
-    description: 'Tools for software teams',
-    period: '2022 – 2024',
+    company: 'Intel',
+    role: 'Pricing Strategy Analyst Intern',
+    description: 'Pricing CPUs in EMEA',
+    period: '2025 – Present',
   },
   {
-    company: 'Stripe',
-    role: 'Design Engineer',
-    description: 'Developer financial products',
-    period: '2020 – 2022',
+    company: 'TikTok',
+    role: 'Merchant Strategy & Operations Intern',
+    description: 'Working on growing TikTok Shop',
+    period: 'Summer 2025',
   },
   {
-    company: 'UCL',
-    role: 'BSc Computer Science & Design',
-    description: 'First Class Honours',
-    period: '2016 – 2020',
+    company: 'Amazon',
+    role: 'Program Manager Intern',
+    description: 'Improving rail compliance among carriers',
+    period: 'Spring 2025',
+  },
+  {
+    company: 'Spotify',
+    role: 'Product Manager Intern',
+    description: 'Working on AI products',
+    period: 'Summer 2024',
   },
 ]
 
