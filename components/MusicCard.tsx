@@ -7,11 +7,11 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 // src:         e.g. '/music/blinding-lights.mp3'
 const TRACKS = [
   {
-    title:       'Blinding Lights',
-    artist:      'The Weeknd',
-    album:       'After Hours',
-    albumArtUrl: null as string | null,
-    src:         '/music/blinding-lights.mp3',
+    title:       'Home Run',
+    artist:      'The Man The Myth The Meatslab',
+    album:       'Home Run',
+    albumArtUrl: '/music/art/Home Run cover.jpg' as string | null,
+    src:         '/music/The Man The Myth The Meatslab - Home Run (SPOTISAVER).mp3',
   },
 ]
 // ─────────────────────────────────────────────────────────────────────────────
