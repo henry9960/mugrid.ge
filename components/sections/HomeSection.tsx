@@ -62,7 +62,7 @@ export default function HomeSection() {
             </span>
           </div>
 
-          <Divider />
+          <hr className="border-t border-[#E4E4E8]" />
 
           {/* Role — hero, company as context */}
           <div className="flex items-start justify-between gap-4">
