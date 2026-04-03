@@ -1,19 +1,19 @@
 const PLACEHOLDER_POSTS = [
   {
-    date: 'Feb 2025',
-    title: 'Systems Thinking in Interface Design',
+    date: 'July 2026',
+    title: 'Example blog post',
     tags: ['Design', 'Systems'],
     readTime: '5 min read',
   },
   {
-    date: 'Jan 2025',
-    title: 'What Makes a Great Design Tool',
+    date: 'June 2026',
+    title: 'Example blog post',
     tags: ['Tools', 'Craft'],
     readTime: '8 min read',
   },
   {
-    date: 'Dec 2024',
-    title: 'On Building with AI',
+    date: 'May 2026',
+    title: 'Example blog post',
     tags: ['AI', 'Product'],
     readTime: '6 min read',
   },
