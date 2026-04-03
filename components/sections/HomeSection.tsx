@@ -1,29 +1,17 @@
 const EXPERIENCES = [
   {
-    company: 'Anthropic',
-    role: 'Product Designer',
-    description: 'Shaping interfaces at the frontier of AI.',
-    period: '2024 – Present',
+    company: 'Microsoft',
+    role: 'Product Manager Intern',
+    description: 'Working on AI products.',
+    period: 'Summer 2026',
     current: true,
-  },
-  {
-    company: 'Linear',
-    role: 'Product Designer',
-    description: 'Tooling for high-velocity software teams.',
-    period: '2022 – 2024',
-  },
-  {
-    company: 'Stripe',
-    role: 'Design Engineer',
-    description: 'Developer-facing financial products.',
-    period: '2020 – 2022',
   },
 ]
 
 const NOW_ITEMS = [
-  { label: 'Working on', value: 'Design systems for LLM interfaces' },
-  { label: 'Reading', value: 'The Shape of Design — Frank Chimero' },
-  { label: 'Listening to', value: 'Floating Points, Burial, Four Tet' },
+  { label: 'Learning', value: 'Vibecoding and using Claude!' },
+  { label: 'Reading', value: 'wip' },
+  { label: 'Listening to', value: 'wip' },
   { label: 'Location', value: 'London, UK' },
 ]
 
@@ -44,13 +32,13 @@ export default function HomeSection() {
           <div className="flex items-start justify-between mb-6">
             <div>
               <p className="text-xs font-medium uppercase tracking-widest text-[#ABABAB] mb-3">
-                Portfolio
+                Hi there, I'm...
               </p>
               <h1 className="text-[52px] font-semibold text-[#0A0A0A] leading-none tracking-tight">
-                Henry
+                Harry Mugridge
               </h1>
               <p className="text-lg text-[#8A8A8A] font-light mt-2">
-                Product Designer &amp; Builder
+                Product Manager &amp; Student
               </p>
             </div>
             {/* Avatar placeholder */}
@@ -60,14 +48,10 @@ export default function HomeSection() {
           <Divider />
 
           <p className="text-[15px] text-[#6B6B6B] leading-relaxed">
-            I build products that live at the intersection of design and engineering.
-            With a background in systems thinking and interaction design, I focus on
-            creating tools that feel inevitable — interfaces that get out of the way
-            and let people think clearly.
+            WIP text goes here
           </p>
           <p className="text-[15px] text-[#6B6B6B] leading-relaxed mt-4">
-            Previously at Stripe and Linear. Currently exploring what great design
-            looks like in the age of AI at Anthropic.
+            WIP text goes here
           </p>
         </div>
 
@@ -79,7 +63,7 @@ export default function HomeSection() {
             <span className="w-1.5 h-1.5 rounded-full bg-[#3A7D44] inline-block" />
             Available for select projects
           </span>
-          <span className="text-xs text-[#ABABAB]">London, UK</span>
+          <span className="text-xs text-[#ABABAB]">London, United Kingdom</span>
         </div>
       </div>
 
