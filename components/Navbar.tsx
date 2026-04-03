@@ -1,0 +1,80 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+
+const NAV_ITEMS = [
+  { id: 'home', label: 'Home' },
+  { id: 'about', label: 'About' },
+  { id: 'blog', label: 'Blog' },
+  { id: 'contact', label: 'Contact' },
+]
+
+export default function Navbar() {
+  const [active, setActive] = useState('home')
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY + 140
+
+      for (const { id } of [...NAV_ITEMS].reverse()) {
+        const el = document.getElementById(id)
+        if (el && el.offsetTop <= scrollY) {
+          setActive(id)
+          break
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80
+      window.scrollTo({ top, behavior: 'smooth' })
+    }
+    setActive(id)
+  }
+
+  return (
+    <div className="fixed top-6 inset-x-0 z-50 flex justify-center pointer-events-none">
+      <nav
+        className="pointer-events-auto flex items-center gap-0.5 rounded-full p-1.5"
+        style={{
+          backgroundColor: 'rgba(247,247,249,0.88)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 1px 0 0 rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.07)',
+          border: '1px solid rgba(0,0,0,0.06)',
+        }}
+      >
+        {NAV_ITEMS.map(({ id, label }) => (
+          <button
+            key={id}
+            onClick={() => scrollTo(id)}
+            className="relative px-4 py-1.5 rounded-full text-sm outline-none focus-visible:ring-2 focus-visible:ring-black/10"
+          >
+            {active === id && (
+              <motion.span
+                layoutId="nav-pill"
+                className="absolute inset-0 rounded-full bg-white"
+                style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
+                transition={{ type: 'spring', bounce: 0.12, duration: 0.28 }}
+              />
+            )}
+            <span
+              className="relative z-10 font-medium transition-colors duration-150"
+              style={{ color: active === id ? '#0A0A0A' : '#8A8A8A' }}
+            >
+              {label}
+            </span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  )
+}
