@@ -13,12 +13,15 @@ export default function Page() {
           <HomeSection />
         </section>
         <section id="about" className="py-4">
+          <h2 className="text-3xl font-semibold text-[#0A0A0A] mb-4">More about me</h2>
           <AboutSection />
         </section>
         <section id="blog" className="py-4">
+          <h2 className="text-3xl font-semibold text-[#0A0A0A] mb-4">My thoughts</h2>
           <BlogSection />
         </section>
         <section id="contact" className="py-4 pb-24">
+          <h2 className="text-3xl font-semibold text-[#0A0A0A] mb-4">Contact me</h2>
           <ContactSection />
         </section>
       </div>
