@@ -1,3 +1,5 @@
+import WhatImUpToCard from '@/components/WhatImUpToCard'
+
 function Divider() {
   return <hr className="border-t border-[#E4E4E8] my-3" />
 }
@@ -49,53 +51,7 @@ export default function HomeSection() {
       {/* ── Right side grid ───────────────────────────── */}
       <div className="col-span-12 md:col-span-5 grid grid-cols-2 gap-4">
 
-        {/* What I'm up to — spans full width */}
-        <div className="col-span-2 bg-[#F7F7F9] rounded-3xl p-5 flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-[#0A0A0A]">What I&apos;m up to</h2>
-            <span
-              className="inline-flex items-center gap-1.5 text-[10px] font-semibold rounded-full px-2 py-1"
-              style={{ color: '#3A7D44', backgroundColor: '#EDFAF1' }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#3A7D44] inline-block" />
-              Now
-            </span>
-          </div>
-
-          <hr className="border-t border-[#E4E4E8]" />
-
-          {/* Role — hero, company as context */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <p className="text-xl font-semibold text-[#0A0A0A] leading-tight">Product Manager Intern</p>
-              <div className="flex items-center gap-2 mt-1.5">
-                {/* Microsoft logo mark — small */}
-                <div className="grid grid-cols-2 gap-[2px] flex-shrink-0">
-                  <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#F25022' }} />
-                  <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#7FBA00' }} />
-                  <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#00A4EF' }} />
-                  <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#FFB900' }} />
-                </div>
-                <p className="text-sm text-[#6B6B6B]">Microsoft · Summer 2026</p>
-              </div>
-              <p className="text-xs text-[#ABABAB] mt-3 leading-relaxed">
-                WIP — add a one-liner about what you&apos;re working on here.
-              </p>
-            </div>
-          </div>
-
-          {/* Meta row — flush to bottom, no divider */}
-          <div className="grid grid-cols-2 pt-1">
-            <div>
-              <p className="text-[9px] font-semibold uppercase tracking-widest text-[#ABABAB] mb-0.5">Learning</p>
-              <p className="text-xs text-[#0A0A0A]">Vibecoding and using Claude!</p>
-            </div>
-            <div>
-              <p className="text-[9px] font-semibold uppercase tracking-widest text-[#ABABAB] mb-0.5">Location</p>
-              <p className="text-xs text-[#0A0A0A]">London, UK</p>
-            </div>
-          </div>
-        </div>
+        <WhatImUpToCard />
 
         {/* Music */}
         <div className="bg-[#F7F7F9] rounded-3xl p-5 aspect-square flex flex-col justify-between">
