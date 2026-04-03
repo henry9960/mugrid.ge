@@ -64,19 +64,23 @@ export default function HomeSection() {
 
           <Divider />
 
-          {/* Microsoft internship — hero */}
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-2xl font-semibold text-[#0A0A0A] leading-none">Microsoft</p>
-              <p className="text-sm text-[#6B6B6B] mt-1">Product Manager Intern</p>
-              <p className="text-xs text-[#ABABAB] mt-0.5">Summer 2026</p>
-            </div>
-            {/* Microsoft logo mark */}
-            <div className="grid grid-cols-2 gap-[3px] flex-shrink-0">
-              <div className="w-5 h-5 rounded-[3px]" style={{ backgroundColor: '#F25022' }} />
-              <div className="w-5 h-5 rounded-[3px]" style={{ backgroundColor: '#7FBA00' }} />
-              <div className="w-5 h-5 rounded-[3px]" style={{ backgroundColor: '#00A4EF' }} />
-              <div className="w-5 h-5 rounded-[3px]" style={{ backgroundColor: '#FFB900' }} />
+          {/* Role — hero, company as context */}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <p className="text-xl font-semibold text-[#0A0A0A] leading-tight">Product Manager Intern</p>
+              <div className="flex items-center gap-2 mt-1.5">
+                {/* Microsoft logo mark — small */}
+                <div className="grid grid-cols-2 gap-[2px] flex-shrink-0">
+                  <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#F25022' }} />
+                  <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#7FBA00' }} />
+                  <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#00A4EF' }} />
+                  <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#FFB900' }} />
+                </div>
+                <p className="text-sm text-[#6B6B6B]">Microsoft · Summer 2026</p>
+              </div>
+              <p className="text-xs text-[#ABABAB] mt-3 leading-relaxed">
+                WIP — add a one-liner about what you&apos;re working on here.
+              </p>
             </div>
           </div>
 
