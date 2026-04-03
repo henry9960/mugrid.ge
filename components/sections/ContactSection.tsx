@@ -83,7 +83,7 @@ function EmailCard({ className = '' }: { className?: string }) {
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
 
-  const mailtoHref = `mailto:hello@henry.design?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`
+  const mailtoHref = `mailto:harry@mugrid.ge?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`
 
   return (
     <div className={`bg-[#F7F7F9] rounded-3xl p-6 ${className}`}>
@@ -101,7 +101,7 @@ function EmailCard({ className = '' }: { className?: string }) {
 
       <hr className="border-t border-[#E4E4E8] my-4" />
 
-      <p className="text-sm text-[#6B6B6B] mb-4">hello@henry.design</p>
+      <p className="text-sm text-[#6B6B6B] mb-4">harry@mugrid.ge</p>
 
       <AnimatePresence>
         {composing && (
@@ -177,7 +177,7 @@ function GitHubCard({ className = '' }: { className?: string }) {
         </span>
       </div>
       <hr className="border-t border-[#E4E4E8] my-4" />
-      <p className="text-sm text-[#6B6B6B]">@henry</p>
+      <p className="text-sm text-[#6B6B6B]">@henry9960</p>
       <p className="text-xs text-[#ABABAB] mt-4">View profile →</p>
     </div>
   )
@@ -190,15 +190,15 @@ export default function ContactSection() {
       <PlatformCard
         className="col-span-12 md:col-span-3"
         platform="LinkedIn"
-        handle="/in/henrydesign"
-        href="https://linkedin.com/in/henrydesign"
+        handle="/in/harrymugridge"
+        href="https://linkedin.com/in/harrymugridge"
         hoverBg="#0A66C2"
       />
       <PlatformCard
         className="col-span-12 md:col-span-3"
         platform="Instagram"
-        handle="@henry.design"
-        href="https://instagram.com/henry.design"
+        handle="@hyhb"
+        href="https://instagram.com/hyhb"
         hoverBg={{
           background:
             'linear-gradient(135deg, #833AB4 0%, #C13584 35%, #E1306C 55%, #FD1D1D 78%, #FCB045 100%)',
