@@ -122,7 +122,7 @@ export default function WhatImUpToCard() {
           </div>
         </div>
         <p className="text-xs mt-3 leading-relaxed" style={{ color: 'rgba(255,255,255,0.38)' }}>
-          WIP — add a one-liner about what you&apos;re working on here.
+          Incoming Product intern in the MSAI team.
         </p>
       </div>
 
@@ -141,7 +141,7 @@ export default function WhatImUpToCard() {
             Location
           </p>
           <p className="text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>
-            London, UK
+            London, United Kingdom
           </p>
         </div>
       </div>

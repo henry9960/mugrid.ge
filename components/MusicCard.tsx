@@ -2,6 +2,19 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 
+interface FloatingNote {
+  id:       number
+  symbol:   string
+  x:        string   // CSS left or right value
+  y:        string   // CSS top or bottom value
+  fromRight: boolean
+  fromTop:   boolean
+  drift:    number   // px horizontal drift
+  size:     number   // px font size
+  duration: number   // ms
+  color:    string
+}
+
 // ── Track library — place files in /public/music/ ─────────────────────────────
 // albumArtUrl: e.g. '/music/art/after-hours.jpg' (null = gradient placeholder)
 // src:         e.g. '/music/blinding-lights.mp3'
@@ -12,6 +25,16 @@ const TRACKS = [
     album:       'Home Run',
     albumArtUrl: '/music/art/Home Run cover.jpg' as string | null,
     src:         '/music/The Man The Myth The Meatslab - Home Run (SPOTISAVER).mp3',
+    startTime:   20,   // ← seconds to start playback from (e.g. 30 = start at 0:30)
+  },
+  
+  {
+    title:       'Blue Spring',
+    artist:      'Nathan Micay',
+    album:       'Blue Spring',
+    albumArtUrl: '/music/art/Blue Spring cover.jpg' as string | null,
+    src:         '/music/Nathan Micay - Blue Spring (SPOTISAVER).mp3',
+    startTime:   20,   // ← seconds to start playback from (e.g. 30 = start at 0:30)
   },
 ]
 // ─────────────────────────────────────────────────────────────────────────────
@@ -70,12 +93,6 @@ function EqBars({ playing }: { playing: boolean }) {
   ]
   return (
     <>
-      <style>{`
-        @keyframes eq {
-          0%, 100% { transform: scaleY(0.3); }
-          50%       { transform: scaleY(1);   }
-        }
-      `}</style>
       <span className="flex items-end gap-[2px] h-4 flex-shrink-0">
         {bars.map((b, i) => (
           <span
@@ -97,11 +114,15 @@ function EqBars({ playing }: { playing: boolean }) {
   )
 }
 
+const SYMBOLS = ['♪', '♫', '♩', '♬']
+let noteUid = 0
+
 export default function MusicCard() {
   const [trackIdx,     setTrackIdx]     = useState(0)
   const [isPlaying,    setIsPlaying]    = useState(false)
   const [currentTime,  setCurrentTime]  = useState(0)
   const [duration,     setDuration]     = useState(0)
+  const [notes,        setNotes]        = useState<FloatingNote[]>([])
   const audioRef    = useRef<HTMLAudioElement | null>(null)
   const progressRef = useRef<HTMLDivElement>(null)
 
@@ -113,8 +134,14 @@ export default function MusicCard() {
     audioRef.current = audio
 
     const onTime     = () => setCurrentTime(audio.currentTime)
-    const onMeta     = () => setDuration(audio.duration)
-    const onEnded    = () => { setIsPlaying(false); setCurrentTime(0) }
+    const onMeta     = () => {
+      setDuration(audio.duration)
+      if (track.startTime > 0) {
+        audio.currentTime = track.startTime
+        setCurrentTime(track.startTime)
+      }
+    }
+    const onEnded    = () => { setIsPlaying(false); setCurrentTime(track.startTime ?? 0) }
 
     audio.addEventListener('timeupdate',     onTime)
     audio.addEventListener('loadedmetadata', onMeta)
@@ -127,6 +154,40 @@ export default function MusicCard() {
       audio.removeEventListener('ended',          onEnded)
     }
   }, [trackIdx, track.src])
+
+  // Spawn floating music notes while playing
+  useEffect(() => {
+    if (!isPlaying) { setNotes([]); return }
+
+    function spawn() {
+      const id       = noteUid++
+      const symbol   = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]
+      const duration = 2000 + Math.random() * 1200
+      const drift    = (Math.random() - 0.5) * 44
+      const size     = 10 + Math.random() * 8
+      const color    = Math.random() > 0.45 ? '#1DB954' : 'rgba(255,255,255,0.65)'
+
+      // Pick an edge: bottom (most common), left, right, top (rare)
+      const roll = Math.random()
+      let note: FloatingNote
+      if (roll < 0.50) {                                          // bottom
+        note = { id, symbol, duration, drift, size, color, fromRight: false, fromTop: false, x: `${8 + Math.random() * 84}%`, y: '8%' }
+      } else if (roll < 0.75) {                                   // left
+        note = { id, symbol, duration, drift, size, color, fromRight: false, fromTop: true,  x: '6%',                          y: `${15 + Math.random() * 65}%` }
+      } else if (roll < 0.92) {                                   // right
+        note = { id, symbol, duration, drift, size, color, fromRight: true,  fromTop: true,  x: '6%',                          y: `${15 + Math.random() * 65}%` }
+      } else {                                                     // top
+        note = { id, symbol, duration, drift, size, color, fromRight: false, fromTop: true,  x: `${8 + Math.random() * 84}%`, y: '6%' }
+      }
+
+      setNotes(prev => [...prev, note])
+      setTimeout(() => setNotes(prev => prev.filter(n => n.id !== id)), duration + 50)
+    }
+
+    spawn()
+    const iv = setInterval(spawn, 650)
+    return () => { clearInterval(iv); setNotes([]) }
+  }, [isPlaying])
 
   const togglePlay = useCallback(() => {
     const audio = audioRef.current
@@ -143,16 +204,18 @@ export default function MusicCard() {
   const prevTrack = useCallback(() => {
     audioRef.current?.pause()
     setIsPlaying(false)
-    setCurrentTime(0)
-    setTrackIdx(i => (i - 1 + TRACKS.length) % TRACKS.length)
-  }, [])
+    const prev = (trackIdx - 1 + TRACKS.length) % TRACKS.length
+    setCurrentTime(TRACKS[prev].startTime ?? 0)
+    setTrackIdx(prev)
+  }, [trackIdx])
 
   const nextTrack = useCallback(() => {
     audioRef.current?.pause()
     setIsPlaying(false)
-    setCurrentTime(0)
-    setTrackIdx(i => (i + 1) % TRACKS.length)
-  }, [])
+    const next = (trackIdx + 1) % TRACKS.length
+    setCurrentTime(TRACKS[next].startTime ?? 0)
+    setTrackIdx(next)
+  }, [trackIdx])
 
   const handleProgressClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const audio = audioRef.current
@@ -166,130 +229,161 @@ export default function MusicCard() {
   const pct = duration > 0 ? (currentTime / duration) * 100 : 0
 
   return (
+    <>
+    <style>{`
+      @keyframes eq {
+        0%, 100% { transform: scaleY(0.3); }
+        50%       { transform: scaleY(1);   }
+      }
+      @keyframes float-note {
+        0%   { transform: translateY(0px)   translateX(0px)               scale(1);    opacity: 0.9; }
+        15%  { opacity: 0.9; }
+        100% { transform: translateY(-70px) translateX(var(--note-drift))  scale(0.65); opacity: 0; }
+      }
+    `}</style>
+    <div className="relative rounded-3xl">
+      {/* ── Floating notes ───────────────────────────────── */}
+      {notes.map(n => (
+        <span
+          key={n.id}
+          className="absolute pointer-events-none select-none"
+          style={{
+            [n.fromRight ? 'right' : 'left']: n.x,
+            [n.fromTop   ? 'top'  : 'bottom']: n.y,
+            fontSize:  `${n.size}px`,
+            color:     n.color,
+            zIndex:    40,
+            lineHeight: 1,
+            animation: `float-note ${n.duration}ms ease-out forwards`,
+            '--note-drift': `${n.drift}px`,
+          } as React.CSSProperties}
+        >
+          {n.symbol}
+        </span>
+      ))}
     <div
-      className="aspect-square rounded-3xl p-5 flex flex-col gap-2 overflow-hidden"
-      style={{ backgroundColor: '#111111' }}
+      className="aspect-square rounded-3xl overflow-hidden relative isolate"
+      style={{
+        transform:  'translateZ(0)',
+        boxShadow:  'inset 0 0 0 1px rgba(255,255,255,0.1), 0 1px 3px rgba(0,0,0,0.2)',
+      }}
     >
-      {/* ── Header ───────────────────────────────────────── */}
-      <div className="flex items-center justify-between flex-shrink-0">
+
+      {/* ── Album art / placeholder background ───────────── */}
+      {track.albumArtUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={track.albumArtUrl}
+          alt={`${track.album} cover`}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <div
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(135deg, #0f1923 0%, #1a1040 45%, #0d2137 100%)' }}
+        />
+      )}
+
+      {/* ── Gradient scrim ───────────────────────────────── */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.08) 75%, transparent 100%)' }}
+      />
+
+      {/* ── Top label ────────────────────────────────────── */}
+      <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
         <p
           className="text-[9px] font-semibold uppercase tracking-widest"
-          style={{ color: 'rgba(255,255,255,0.3)' }}
+          style={{ color: 'rgba(255,255,255,0.45)' }}
         >
           Music
         </p>
-        <span style={{ color: 'rgba(255,255,255,0.2)' }}>
+        <span style={{ color: 'rgba(255,255,255,0.3)' }}>
           <IconMusic />
         </span>
       </div>
 
-      {/* ── Album Art ────────────────────────────────────── */}
-      <div className="flex-1 min-h-0 w-full rounded-xl overflow-hidden">
-        {track.albumArtUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={track.albumArtUrl}
-            alt={`${track.album} cover`}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div
-            className="w-full h-full flex items-center justify-center"
-            style={{
-              background: 'linear-gradient(135deg, #0f1923 0%, #1a1040 45%, #0d2137 100%)',
-            }}
+      {/* ── Bottom overlay: info + progress + controls ───── */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 flex flex-col gap-2.5">
+
+        {/* Track info */}
+        <div className="flex items-end justify-between gap-2">
+          <a
+            href="https://open.spotify.com/user/638knp49o0si9u4tc3wcbuikr?si=4511488aa651476a"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="min-w-0 group"
           >
-            <svg
-              width="28" height="28" viewBox="0 0 24 24" fill="none"
-              style={{ color: 'rgba(255,255,255,0.08)' }}
-            >
-              <path
-                d="M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm12-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"
-                stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-              />
-            </svg>
+            <p className="text-sm font-semibold leading-snug truncate text-white group-hover:underline">
+              {track.title}
+            </p>
+            <p className="text-[11px] mt-0.5 truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              {track.artist}
+            </p>
+          </a>
+          <EqBars playing={isPlaying} />
+        </div>
+
+        {/* Progress */}
+        <div className="flex flex-col gap-1">
+          <div
+            ref={progressRef}
+            className="w-full h-[3px] rounded-full cursor-pointer"
+            style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}
+            onClick={handleProgressClick}
+          >
+            <div
+              className="h-full rounded-full pointer-events-none"
+              style={{ width: `${pct}%`, backgroundColor: '#1DB954' }}
+            />
           </div>
-        )}
-      </div>
-
-      {/* ── Track Info ───────────────────────────────────── */}
-      <div className="flex items-center justify-between gap-2 flex-shrink-0">
-        <div className="min-w-0">
-          <p
-            className="text-sm font-semibold leading-snug truncate"
-            style={{ color: '#FFFFFF' }}
-          >
-            {track.title}
-          </p>
-          <p className="text-xs mt-0.5 truncate" style={{ color: 'rgba(255,255,255,0.45)' }}>
-            {track.artist}
-          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] tabular-nums" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              {fmt(currentTime)}
+            </span>
+            <span className="text-[9px] tabular-nums" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              {fmt(duration)}
+            </span>
+          </div>
         </div>
-        <EqBars playing={isPlaying} />
-      </div>
 
-      {/* ── Progress Bar ─────────────────────────────────── */}
-      <div className="flex flex-col gap-1 flex-shrink-0">
-        <div
-          ref={progressRef}
-          className="w-full h-[3px] rounded-full cursor-pointer group relative"
-          style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
-          onClick={handleProgressClick}
-        >
-          <div
-            className="h-full rounded-full pointer-events-none"
-            style={{ width: `${pct}%`, backgroundColor: '#1DB954' }}
-          />
-        </div>
-        <div className="flex items-center justify-between">
-          <span
-            className="text-[9px] tabular-nums"
-            style={{ color: 'rgba(255,255,255,0.3)' }}
+        {/* Controls */}
+        <div className="flex items-center justify-center gap-5">
+          <button
+            onClick={prevTrack}
+            className="transition-colors duration-150 cursor-pointer"
+            style={{ color: 'rgba(255,255,255,0.45)' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
+            aria-label="Previous track"
           >
-            {fmt(currentTime)}
-          </span>
-          <span
-            className="text-[9px] tabular-nums"
-            style={{ color: 'rgba(255,255,255,0.3)' }}
+            <IconPrev />
+          </button>
+
+          <button
+            onClick={togglePlay}
+            className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-transform duration-150 hover:scale-105 active:scale-95"
+            style={{ backgroundColor: '#1DB954', color: '#000' }}
+            aria-label={isPlaying ? 'Pause' : 'Play'}
           >
-            {fmt(duration)}
-          </span>
+            {isPlaying ? <IconPause /> : <IconPlay />}
+          </button>
+
+          <button
+            onClick={nextTrack}
+            className="transition-colors duration-150 cursor-pointer"
+            style={{ color: 'rgba(255,255,255,0.45)' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
+            aria-label="Next track"
+          >
+            <IconNext />
+          </button>
         </div>
-      </div>
 
-      {/* ── Controls ─────────────────────────────────────── */}
-      <div className="flex items-center justify-center gap-5 flex-shrink-0">
-        <button
-          onClick={prevTrack}
-          className="transition-colors duration-150 cursor-pointer"
-          style={{ color: 'rgba(255,255,255,0.35)' }}
-          onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)')}
-          onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
-          aria-label="Previous track"
-        >
-          <IconPrev />
-        </button>
-
-        <button
-          onClick={togglePlay}
-          className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-transform duration-150 hover:scale-105 active:scale-95"
-          style={{ backgroundColor: '#1DB954', color: '#000' }}
-          aria-label={isPlaying ? 'Pause' : 'Play'}
-        >
-          {isPlaying ? <IconPause /> : <IconPlay />}
-        </button>
-
-        <button
-          onClick={nextTrack}
-          className="transition-colors duration-150 cursor-pointer"
-          style={{ color: 'rgba(255,255,255,0.35)' }}
-          onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)')}
-          onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
-          aria-label="Next track"
-        >
-          <IconNext />
-        </button>
       </div>
     </div>
+    </div>
+    </>
   )
 }

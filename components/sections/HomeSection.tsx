@@ -21,7 +21,7 @@ export default function HomeSection() {
                 Harry Mugridge
               </h1>
               <p className="text-lg text-[#8A8A8A] font-light mt-2">
-                Product Manager &amp; Student
+                Product Manager &amp; Student at Royal Holloway
               </p>
             </div>
             <div className="w-14 h-14 rounded-full bg-[#E4E4E8] flex-shrink-0 mt-1" />
@@ -30,10 +30,13 @@ export default function HomeSection() {
           <Divider />
 
           <p className="text-[15px] text-[#6B6B6B] leading-relaxed">
-            WIP text goes here
+            Hey, I&apos;m Harry, I&apos;m a Product Manager who&apos;s background spans product and strategy roles across Microsoft and Amazon where I&apos;ve worked on the customer experience, growth and operations.
           </p>
           <p className="text-[15px] text-[#6B6B6B] leading-relaxed mt-4">
-            WIP text goes here
+            In addition to that, I am also currently a student at Royal Holloway, University of London studying Business and Management.
+          </p>
+          <p className="text-[15px] text-[#6B6B6B] leading-relaxed mt-4">
+            Scroll down below to learn more about me!
           </p>
         </div>
 
