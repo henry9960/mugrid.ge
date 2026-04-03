@@ -86,7 +86,7 @@ export default function WhatImUpToCard() {
             width:  `${r.size}px`,
             height: `${r.size}px`,
             border: '1px solid rgba(167,243,208,0.55)',
-            animation: `ripple-out ${r.duration}ms ${r.delay}ms cubic-bezier(0.2,0.6,0.4,1) forwards`,
+            animation: `ripple-out ${r.duration}ms ${r.delay}ms cubic-bezier(0.2,0.6,0.4,1) both`,
           }}
         />
       ))}
