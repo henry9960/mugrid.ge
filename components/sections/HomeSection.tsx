@@ -1,6 +1,7 @@
 import WhatImUpToCard from '@/components/WhatImUpToCard'
 import MusicCard from '@/components/MusicCard'
 import GalleryCard from '@/components/GalleryCard'
+import SparklyName from '@/components/SparklyName'
 
 function Divider() {
   return <hr className="border-t border-[#E4E4E8] my-3" />
@@ -19,7 +20,7 @@ export default function HomeSection() {
                 Hi there, I&apos;m...
               </p>
               <h1 className="text-[52px] font-semibold text-[#0A0A0A] leading-none tracking-tight">
-                Harry Mugridge
+                <SparklyName>Harry Mugridge</SparklyName>
               </h1>
               <p className="text-lg text-[#8A8A8A] font-light mt-2">
                 Product Manager &amp; Student at Royal Holloway
