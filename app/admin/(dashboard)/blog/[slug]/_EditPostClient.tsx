@@ -120,7 +120,13 @@ export default function EditPostClient() {
   }
 
   const handleDelete = async () => {
-    await fetch(`/api/admin/posts?slug=${slug}`, { method: 'DELETE' })
+    const res = await fetch(`/api/admin/posts?slug=${slug}`, { method: 'DELETE' })
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setDeleteOpen(false)
+      setError(data.error ?? `Delete failed (${res.status})`)
+      return
+    }
     router.push('/admin/blog')
     router.refresh()
   }
