@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm run dev      # Start dev server at localhost:3000
-npm run build    # Static export to ./out (required for GitHub Pages)
+npm run build    # Production build (Next.js server mode, used by Vercel)
 npm run lint     # ESLint via Next.js
 ```
 
@@ -14,7 +14,11 @@ No test suite is configured.
 
 ## Deployment
 
-The site deploys to GitHub Pages (`harry.mugrid.ge`) via `.github/workflows/deploy.yml` on every push to `main`. The workflow builds with `npm ci && npm run build` and uploads `./out`. Because `output: 'export'` is set in `next.config.ts`, this is a fully static export — no server-side features (API routes, middleware, `next/image` optimisation) are available.
+The site is hosted on **Vercel** at `harry.mugrid.ge`. Vercel auto-deploys on every push to `main` — no manual steps needed. There is no static export; the site runs as a full Next.js server on Vercel.
+
+- `.github/workflows/deploy.yml` is a stub comment — GitHub Actions is not used.
+- `next.config.ts` has no `output: 'export'` — standard Next.js server mode.
+- Do NOT re-add `output: 'export'` — it breaks API routes and the admin CMS.
 
 ## Architecture
 
@@ -31,6 +35,35 @@ app/
     page.tsx              # /blog listing page — server component, passes to BlogList
     [slug]/
       page.tsx            # Individual post renderer with prose styles
+  admin/
+    page.tsx              # Redirects to /admin/home
+    login/
+      page.tsx            # Login form (unauthenticated)
+    (dashboard)/          # Route group — all children require auth (middleware)
+      layout.tsx          # Admin shell with sidebar nav
+      home/page.tsx       # Edit HomeSection content
+      about/page.tsx      # Edit AboutSection content
+      contact/page.tsx    # Edit ContactSection content
+      thoughts/page.tsx   # Edit "What I'm Up To" card
+      music/page.tsx      # Edit music tracks
+      gallery/page.tsx    # Edit gallery photos
+      blog/
+        page.tsx          # List + create blog posts
+        [slug]/
+          page.tsx        # Thin server wrapper → _EditPostClient.tsx
+          _EditPostClient.tsx  # Edit/delete a post (client component)
+
+  api/
+    admin/
+      auth/route.ts       # POST login, DELETE logout, GET ping
+      home/route.ts       # GET/POST home content
+      about/route.ts      # GET/POST about content
+      contact/route.ts    # GET/POST contact content
+      thoughts/route.ts   # GET/POST thoughts content
+      music/route.ts      # GET/POST music tracks
+      gallery/route.ts    # GET/POST gallery photos
+      posts/route.ts      # GET all posts / GET?slug= / PUT / DELETE?slug=
+      upload/route.ts     # POST file upload (Vercel Blob or local fallback)
 
 components/
   Navbar.tsx              # 'use client' — floating pill, scroll-spy, Framer Motion
@@ -45,6 +78,8 @@ components/
   ExternalLinkButton.tsx  # Shared ↗ icon in a circle — internal Link or external <a>
   BlogList.tsx            # 'use client' — tag filter pills + post grid for /blog page
   CatWalk.tsx             # 'use client' — orange tabby walks right→left (unused, kept)
+  admin/
+    MarkdownEditor.tsx    # Textarea-based markdown editor used in blog post forms
   sections/
     HomeSection.tsx       # Server component — 12-col bento grid
     AboutSection.tsx      # 'use client' — about blocks + 3-state timeline,
@@ -58,15 +93,65 @@ components/
 lib/
   posts.ts                # Build-time markdown reader: gray-matter + marked,
                           #   getAllPosts / getPostBySlug / getAllTags / formatPostDate
+  github-content.ts       # GitHub Contents API helpers: githubWriteFile / githubDeleteFile
+                          #   Falls back to filesystem writes when GITHUB_TOKEN not set (local dev)
+  admin/
+    auth.ts               # PBKDF2 password verify, session token helpers
+    content.ts            # readContent (filesystem) / writeContent (→ githubWriteFile)
+
+middleware.ts             # Protects /admin/(dashboard)/* routes — redirects to /admin/login
 
 content/
   posts/
     *.md                  # Markdown blog posts with YAML frontmatter
+  data/
+    *.json                # CMS-managed content (home.json, about.json, contact.json, etc.)
+                          # Edited via admin and committed to GitHub via API
 
 public/
   gallery/                # Local photos for GalleryCard (photo1.jpg … photo5.JPG)
   music/                  # Local audio files for MusicCard
 ```
+
+## Admin CMS
+
+The admin lives at `/admin`. Authentication uses an HTTP-only session cookie.
+
+**How saves work:**
+1. Admin form → POST to `/api/admin/*`
+2. API route calls `writeContent()` → `githubWriteFile()`
+3. GitHub Contents API commits the file to the repo
+4. Vercel detects the push and rebuilds (~1 min)
+5. New content appears on the live site
+
+**Local dev:** When `GITHUB_TOKEN` is not set, writes go directly to the filesystem instead.
+
+**Required environment variables** (set in Vercel dashboard):
+
+| Variable | Purpose |
+|---|---|
+| `ADMIN_PASSWORD_HASH` | PBKDF2 hash — format: `pbkdf2:sha256:100000:<salt>:<hash>` |
+| `ADMIN_TOKEN` | 64-char random hex — stored in session cookie |
+| `GITHUB_TOKEN` | Fine-grained PAT with Contents: read+write on this repo |
+| `GITHUB_OWNER` | `henry9960` |
+| `GITHUB_REPO` | `mugrid.ge` |
+| `BLOB_READ_WRITE_TOKEN` | Auto-set by Vercel Blob — for image uploads (optional locally) |
+
+**Generating credentials locally:**
+```bash
+# ADMIN_TOKEN
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# ADMIN_PASSWORD_HASH
+node -e "
+  const c=require('crypto'), pw='your-password-here'
+  const s=c.randomBytes(16).toString('hex')
+  const h=c.pbkdf2Sync(pw,s,100000,32,'sha256').toString('hex')
+  console.log('pbkdf2:sha256:100000:'+s+':'+h)
+"
+```
+
+After changing env vars in Vercel, you must **redeploy** for them to take effect.
 
 ## Blog System
 
@@ -89,6 +174,7 @@ Content in markdown...
 - `/blog/[slug]` renders the full post with prose styles.
 - Read time is auto-estimated (~200 wpm).
 - `gray-matter` parses YAML dates as `Date` objects — always use `toISODate()` helper in `lib/posts.ts`, not `String().slice()`.
+- Blog posts can also be created/edited/deleted via the admin at `/admin/blog`.
 
 ## Timeline (AboutSection)
 
@@ -131,6 +217,7 @@ To add a page link to a timeline entry, add `href: '/page-slug'` — an `Externa
 | Music tracks | `MusicCard.tsx` + `/public/music/` |
 | Gallery photos | `GalleryCard.tsx` PHOTOS array + `/public/gallery/` |
 | Blog posts | `content/posts/*.md` |
+| CMS data files | `content/data/*.json` |
 | Site metadata / OG | `app/layout.tsx` |
 | Microsoft page | `app/microsoft/page.tsx` |
 
@@ -147,3 +234,11 @@ The first entry is always shown first.
 ## Neural Network Canvas Effect
 
 `NeuralNetworkCanvas` in `AboutSection.tsx` — 16 drifting nodes in MS brand colours (`#F25022`, `#7FBA00`, `#00A4EF`, `#FFB900`) connected by lines when within 70px. Speed 0.35, opacity pulses ±0.004/frame. Canvas `400×100`, `pointerEvents: none`, absolutely inset. Documented in `memory/project_neural_network_effect.md`.
+
+## Known Gotchas
+
+- **Do not use `isomorphic-dompurify`** — its `jsdom` dependency chain breaks webpack bundling. It was removed; do not re-add it.
+- **Do not add `output: 'export'` to next.config.ts** — breaks all API routes and the admin.
+- **Dynamic API routes** (`/api/admin/posts/[slug]`) were eliminated — all post operations use `/api/admin/posts` with query params (`?slug=x`) to avoid static export issues. Keep this pattern.
+- **Env var changes in Vercel require a manual redeploy** — auto-deploy only triggers on git push.
+- **New blog posts take ~1 min to appear** — Vercel must rebuild after the GitHub commit.
