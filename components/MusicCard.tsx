@@ -34,7 +34,7 @@ const TRACKS = [
     album:       'Blue Spring',
     albumArtUrl: '/music/art/Blue Spring cover.jpg' as string | null,
     src:         '/music/Nathan Micay - Blue Spring (SPOTISAVER).mp3',
-    startTime:   20,   // ← seconds to start playback from (e.g. 30 = start at 0:30)
+    startTime:   0,   // ← seconds to start playback from (e.g. 30 = start at 0:30)
   },
 ]
 // ─────────────────────────────────────────────────────────────────────────────
