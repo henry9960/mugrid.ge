@@ -3,16 +3,8 @@
 import { useState, useCallback } from 'react'
 
 // ── Photo library ─────────────────────────────────────────────────────────────
-// Google Drive folder: https://drive.google.com/drive/folders/1SRB0MjsFS7uSgROpNIFO7bmv78_FH8ZR
-//
-// To add a photo from that folder:
-//   1. Open the file in Drive → the URL will look like:
-//      https://drive.google.com/file/d/FILE_ID/view
-//   2. Make sure sharing is set to "Anyone with the link"
-//   3. Add an entry below using:
-//      { src: 'https://drive.google.com/uc?export=view&id=FILE_ID', caption: 'Optional' }
-//
-// Local files also work — place in /public/gallery/ and use '/gallery/photo.jpg'
+// Place photos in /public/gallery/ and add entries below.
+// The first entry is always shown first.
 //
 const PHOTOS: Array<{ src: string; caption?: string }> = [
   { src: '/gallery/photo1.jpg' },
@@ -23,7 +15,7 @@ const PHOTOS: Array<{ src: string; caption?: string }> = [
 ]
 // ─────────────────────────────────────────────────────────────────────────────
 
-const MAX_DOTS = 7   // beyond this, show "n / total" counter instead of dots
+const MAX_DOTS = 7
 
 function ChevronLeft() {
   return (
@@ -55,53 +47,142 @@ function NavButton({ onClick, children }: { onClick: () => void; children: React
 }
 
 export default function GalleryCard() {
-  const [idx, setIdx] = useState(0)
+  const [idx, setIdx]         = useState(0)
+  const [flashKey, setFlashKey] = useState(0)   // increment to retrigger flash
+  const [focusKey, setFocusKey] = useState(0)   // increment to retrigger reticle
 
-  const prev = useCallback(() => setIdx(i => (i - 1 + PHOTOS.length) % PHOTOS.length), [])
-  const next = useCallback(() => setIdx(i => (i + 1) % PHOTOS.length), [])
+  const triggerEffects = useCallback(() => {
+    setFlashKey(k => k + 1)
+    setFocusKey(k => k + 1)
+  }, [])
+
+  const navigate = useCallback((newIdx: number) => {
+    setIdx(newIdx)
+    triggerEffects()
+  }, [triggerEffects])
+
+  const prev = useCallback(() => {
+    setIdx(i => (i - 1 + PHOTOS.length) % PHOTOS.length)
+    triggerEffects()
+  }, [triggerEffects])
+
+  const next = useCallback(() => {
+    setIdx(i => (i + 1) % PHOTOS.length)
+    triggerEffects()
+  }, [triggerEffects])
 
   const isEmpty = PHOTOS.length === 0
   const useDots = PHOTOS.length > 1 && PHOTOS.length <= MAX_DOTS
 
   return (
-    <div className="bg-[#F7F7F9] rounded-3xl aspect-square relative overflow-hidden">
+    <div className="bg-[#1a1a1a] rounded-3xl aspect-square relative overflow-hidden">
+
+      <style>{`
+        @keyframes gallery-fade   { from { opacity: 0.4 } to { opacity: 1 } }
+        @keyframes shutter-flash  { 0% { opacity: 0 } 12% { opacity: 0.72 } 100% { opacity: 0 } }
+        @keyframes reticle-in     { 0% { opacity: 0; transform: scale(1.12) } 25% { opacity: 1 } 70% { opacity: 1 } 100% { opacity: 0; transform: scale(1) } }
+      `}</style>
 
       {/* ── Photo ── */}
       {!isEmpty && (
-        <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            key={PHOTOS[idx].src}
-            src={PHOTOS[idx].src}
-            alt={PHOTOS[idx].caption ?? `Photo ${idx + 1}`}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ animation: 'gallery-fade 0.25s ease' }}
-          />
-          <style>{`@keyframes gallery-fade { from { opacity: 0.5; } to { opacity: 1; } }`}</style>
-          {/* Gradient scrim */}
+        <img
+          key={PHOTOS[idx].src}
+          src={PHOTOS[idx].src}
+          alt={PHOTOS[idx].caption ?? `Photo ${idx + 1}`}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ animation: 'gallery-fade 0.2s ease' }}
+        />
+      )}
+
+      {/* ── Film grain ── */}
+      {!isEmpty && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+            backgroundSize: '180px 180px',
+            opacity: 0.09,
+            mixBlendMode: 'overlay',
+          }}
+        />
+      )}
+
+      {/* ── Gradient scrim ── */}
+      {!isEmpty && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.08) 50%, transparent 100%)' }}
+        />
+      )}
+
+      {/* ── Shutter flash ── */}
+      {flashKey > 0 && (
+        <div
+          key={flashKey}
+          className="absolute inset-0 pointer-events-none"
+          style={{ backgroundColor: 'white', animation: 'shutter-flash 380ms ease-out forwards' }}
+        />
+      )}
+
+      {/* ── Focus reticle ── */}
+      {focusKey > 0 && (
+        <div
+          key={focusKey}
+          className="absolute inset-0 pointer-events-none"
+          style={{ animation: 'reticle-in 600ms ease-out forwards' }}
+        >
+          {/* corners */}
+          {(['tl','tr','bl','br'] as const).map(corner => (
+            <div
+              key={corner}
+              className="absolute"
+              style={{
+                width: 18, height: 18,
+                top:    corner.startsWith('t') ? 14 : undefined,
+                bottom: corner.startsWith('b') ? 14 : undefined,
+                left:   corner.endsWith('l')   ? 14 : undefined,
+                right:  corner.endsWith('r')   ? 14 : undefined,
+                borderTop:    corner.startsWith('t') ? '1.5px solid rgba(255,255,255,0.85)' : undefined,
+                borderBottom: corner.startsWith('b') ? '1.5px solid rgba(255,255,255,0.85)' : undefined,
+                borderLeft:   corner.endsWith('l')   ? '1.5px solid rgba(255,255,255,0.85)' : undefined,
+                borderRight:  corner.endsWith('r')   ? '1.5px solid rgba(255,255,255,0.85)' : undefined,
+              }}
+            />
+          ))}
+          {/* centre crosshair dot */}
           <div
-            className="absolute inset-0"
-            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 45%, transparent 100%)' }}
+            className="absolute"
+            style={{
+              width: 4, height: 4,
+              top: '50%', left: '50%',
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(255,255,255,0.6)',
+            }}
           />
-        </>
+        </div>
       )}
 
       {/* ── Top bar ── */}
       <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-        <p
-          className="text-[9px] font-semibold uppercase tracking-widest"
-          style={{ color: isEmpty ? '#ABABAB' : 'rgba(255,255,255,0.5)' }}
-        >
-          Gallery
-        </p>
+        <div className="flex items-center gap-1.5">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none"
+            stroke={isEmpty ? '#ABABAB' : 'rgba(255,255,255,0.5)'}
+            strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" />
+          </svg>
+          <p className="text-[9px] font-semibold uppercase tracking-widest"
+            style={{ color: isEmpty ? '#ABABAB' : 'rgba(255,255,255,0.5)' }}>
+            Gallery
+          </p>
+        </div>
         {!isEmpty && PHOTOS.length > 1 && !useDots ? (
           <span className="text-[9px] font-medium" style={{ color: 'rgba(255,255,255,0.4)' }}>
             {idx + 1} / {PHOTOS.length}
           </span>
         ) : null}
       </div>
-
-      {/* ── Empty state — intentionally blank ── */}
 
       {/* ── Bottom controls ── */}
       {!isEmpty && (
@@ -113,13 +194,12 @@ export default function GalleryCard() {
           )}
 
           <div className="flex items-center justify-between">
-            {/* Dots indicator */}
             {useDots ? (
               <div className="flex items-center gap-1">
                 {PHOTOS.map((_, i) => (
                   <button
                     key={i}
-                    onClick={() => setIdx(i)}
+                    onClick={() => navigate(i)}
                     className="rounded-full transition-all duration-200 cursor-pointer"
                     style={{
                       width:           i === idx ? '14px' : '5px',
@@ -133,7 +213,6 @@ export default function GalleryCard() {
               <div />
             )}
 
-            {/* Prev / Next arrows */}
             {PHOTOS.length > 1 && (
               <div className="flex items-center gap-1.5">
                 <NavButton onClick={prev}><ChevronLeft /></NavButton>
