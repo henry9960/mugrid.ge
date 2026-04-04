@@ -1,5 +1,3 @@
-export const dynamic = process.env.STATIC_EXPORT === 'true' ? 'force-static' : 'force-dynamic'
-
 import { writeFileSync, mkdirSync } from 'fs'
 import { join, extname } from 'path'
 import { NextResponse } from 'next/server'

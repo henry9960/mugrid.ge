@@ -1,5 +1,3 @@
-export const dynamic = process.env.STATIC_EXPORT === 'true' ? 'force-static' : 'force-dynamic'
-
 import { NextRequest, NextResponse } from 'next/server'
 import { getAllPosts } from '@/lib/posts'
 import fs from 'fs'

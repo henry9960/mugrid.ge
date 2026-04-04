@@ -31,7 +31,9 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          rm -rf app/api app/admin
+          npm run build
         env:
           STATIC_EXPORT: 'true'
 

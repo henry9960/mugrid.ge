@@ -1,5 +1,3 @@
-export const dynamic = process.env.STATIC_EXPORT === 'true' ? 'force-static' : 'force-dynamic'
-
 import { readContent, writeContent } from '@/lib/admin/content'
 import type { MusicContent } from '@/lib/types/content'
 import { NextResponse } from 'next/server'

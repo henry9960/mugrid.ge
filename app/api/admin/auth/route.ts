@@ -1,5 +1,3 @@
-export const dynamic = process.env.STATIC_EXPORT === 'true' ? 'force-static' : 'force-dynamic'
-
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyPassword, getSessionToken, COOKIE_NAME, COOKIE_MAX_AGE } from '@/lib/admin/auth'
 
