@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { marked } from 'marked'
-import DOMPurify from 'dompurify'
+import DOMPurify from 'isomorphic-dompurify'
 
 interface MarkdownEditorProps {
   value: string
