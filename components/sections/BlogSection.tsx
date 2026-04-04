@@ -27,9 +27,9 @@ export default function BlogSection() {
         className="grid grid-cols-12 gap-4"
         style={{ opacity: 0.35, filter: 'blur(1.5px)', pointerEvents: 'none' }}
       >
-        {PLACEHOLDER_POSTS.map((post) => (
+        {PLACEHOLDER_POSTS.map((post, i) => (
           <div
-            key={post.title}
+            key={i}
             className="col-span-12 md:col-span-4 bg-[#F7F7F9] rounded-3xl p-6"
           >
             <p className="text-xs text-[#ABABAB] mb-2">
