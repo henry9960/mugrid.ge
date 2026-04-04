@@ -1,5 +1,6 @@
 import WhatImUpToCard from '@/components/WhatImUpToCard'
 import MusicCard from '@/components/MusicCard'
+import GalleryCard from '@/components/GalleryCard'
 
 function Divider() {
   return <hr className="border-t border-[#E4E4E8] my-3" />
@@ -59,19 +60,7 @@ export default function HomeSection() {
 
         <MusicCard />
 
-        {/* Gallery */}
-        <div className="bg-[#F7F7F9] rounded-3xl p-5 aspect-square flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium uppercase tracking-widest text-[#ABABAB]">Gallery</p>
-            <span className="text-[10px] font-medium text-[#ABABAB] bg-[#EDEDED] rounded-full px-2 py-0.5">
-              Soon
-            </span>
-          </div>
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-xs text-[#D0D0D4]">Visual gallery</p>
-          </div>
-          <div className="h-8 rounded-xl border border-dashed border-[#E4E4E8]" />
-        </div>
+        <GalleryCard />
 
       </div>
     </div>

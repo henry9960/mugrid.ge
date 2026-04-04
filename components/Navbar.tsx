@@ -11,12 +11,14 @@ const NAV_ITEMS = [
 ]
 
 export default function Navbar() {
-  const [active, setActive] = useState('home')
+  const [active,  setActive]  = useState('home')
+  const [hovered, setHovered] = useState<string | null>(null)
+
+  const displayed = hovered ?? active
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY + 140
-
       for (const { id } of [...NAV_ITEMS].reverse()) {
         const el = document.getElementById(id)
         if (el && el.offsetTop <= scrollY) {
@@ -25,7 +27,6 @@ export default function Navbar() {
         }
       }
     }
-
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
@@ -53,12 +54,16 @@ export default function Navbar() {
         }}
       >
         {NAV_ITEMS.map(({ id, label }) => (
-          <button
+          <motion.button
             key={id}
             onClick={() => scrollTo(id)}
+            onMouseEnter={() => setHovered(id)}
+            onMouseLeave={() => setHovered(null)}
+            whileTap={{ scale: 0.88 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 25 }}
             className="relative px-4 py-1.5 rounded-full text-sm outline-none focus-visible:ring-2 focus-visible:ring-black/10"
           >
-            {active === id && (
+            {displayed === id && (
               <motion.span
                 layoutId="nav-pill"
                 className="absolute inset-0 rounded-full bg-white"
@@ -68,11 +73,11 @@ export default function Navbar() {
             )}
             <span
               className="relative z-10 font-medium transition-colors duration-150"
-              style={{ color: active === id ? '#0A0A0A' : '#8A8A8A' }}
+              style={{ color: displayed === id ? '#0A0A0A' : '#8A8A8A' }}
             >
               {label}
             </span>
-          </button>
+          </motion.button>
         ))}
       </nav>
     </div>

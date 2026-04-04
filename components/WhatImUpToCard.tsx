@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
+import Link from 'next/link'
 
 interface Ripple {
   id: number
@@ -100,7 +101,21 @@ export default function WhatImUpToCard() {
 
       {/* ── Role ─────────────────────────────────────────── */}
       <div className="relative z-10">
-        <p className="text-xl font-semibold text-white leading-tight">Product Manager Intern</p>
+        <div className="flex items-center gap-2">
+          <p className="text-xl font-semibold text-white leading-tight">Product Manager Intern</p>
+          <Link
+            href="/microsoft"
+            onClick={e => e.stopPropagation()}
+            className="flex items-center justify-center w-6 h-6 rounded-full flex-shrink-0 transition-all duration-150"
+            style={{ backgroundColor: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.22)'; (e.currentTarget as HTMLElement).style.color = '#fff' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.12)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.7)' }}
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 17L17 7M17 7H7M17 7v10" />
+            </svg>
+          </Link>
+        </div>
         <div className="flex items-center gap-2 mt-1.5">
           <div className="grid grid-cols-2 gap-[2px] flex-shrink-0">
             <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#F25022' }} />
