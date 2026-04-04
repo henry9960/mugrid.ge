@@ -1,3 +1,5 @@
+export const dynamic = 'force-static'
+
 import { readContent, writeContent } from '@/lib/admin/content'
 import type { MusicContent } from '@/lib/types/content'
 import { NextResponse } from 'next/server'

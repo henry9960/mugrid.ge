@@ -1,3 +1,5 @@
+export const dynamic = 'force-static'
+
 import { writeFileSync, mkdirSync } from 'fs'
 import { join, extname } from 'path'
 import { NextResponse } from 'next/server'

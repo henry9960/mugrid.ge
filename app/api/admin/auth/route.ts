@@ -1,3 +1,5 @@
+export const dynamic = 'force-static'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyPassword, getSessionToken, COOKIE_NAME, COOKIE_MAX_AGE } from '@/lib/admin/auth'
 

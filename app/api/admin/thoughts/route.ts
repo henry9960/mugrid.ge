@@ -1,3 +1,5 @@
+export const dynamic = 'force-static'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { readContent, writeContent } from '@/lib/admin/content'
 import type { ThoughtsContent } from '@/lib/types/content'

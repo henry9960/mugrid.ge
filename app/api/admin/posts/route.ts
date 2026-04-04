@@ -1,3 +1,5 @@
+export const dynamic = 'force-static'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getAllPosts } from '@/lib/posts'
 import fs from 'fs'
