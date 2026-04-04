@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import ExternalLinkButton from '@/components/ExternalLinkButton'
 
 const ABOUT_BLOCKS = [
   { label: 'Background', text: 'WIP' },
@@ -20,6 +21,7 @@ interface TimelineEntry {
   state:       TimelineState
   detail?:     string
   badgeLabel?: string
+  href?:       string
 }
 
 const TIMELINE: TimelineEntry[] = [
@@ -29,6 +31,7 @@ const TIMELINE: TimelineEntry[] = [
     description: 'Working on MSAI products.',
     period:      'Summer 2026',
     state:       'active',
+    href:        '/microsoft',
   },
   {
     company:     'Intel',
@@ -378,6 +381,15 @@ export default function AboutSection() {
                                   }}>
                                     Now
                                   </span>
+                                  {item.href && (
+                                    <ExternalLinkButton
+                                      href={item.href}
+                                      size={20}
+                                      bg="rgba(0,0,0,0.06)"
+                                      color="#6B6B6B"
+                                      hoverBg="rgba(0,0,0,0.12)"
+                                    />
+                                  )}
                                 </div>
                                 <p style={{ fontSize: '12px', color: '#6B6B6B', margin: 0 }}>{item.role}</p>
                                 <p style={{ fontSize: '12px', color: '#ABABAB', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.description}</p>

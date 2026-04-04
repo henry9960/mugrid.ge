@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import ExternalLinkButton from '@/components/ExternalLinkButton'
 
 /* ── Platform card (square) ───────────────────────────── */
 function PlatformCard({
@@ -55,12 +56,14 @@ function PlatformCard({
           >
             {handle}
           </p>
-          <span
-            className="text-xs flex-shrink-0"
-            style={{ color: hovered ? 'rgba(255,255,255,0.5)' : '#ABABAB', transition: 'color 0.18s ease-out' }}
+          <svg
+            width="11" height="11" viewBox="0 0 24 24" fill="none"
+            stroke={hovered ? 'rgba(255,255,255,0.5)' : '#ABABAB'}
+            strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            style={{ flexShrink: 0, transition: 'stroke 0.18s ease-out' }}
           >
-            →
-          </span>
+            <path d="M7 17L17 7M17 7H7M17 7v10" />
+          </svg>
         </div>
       </div>
     </a>
@@ -103,7 +106,9 @@ function EmailCard({ className = '' }: { className?: string }) {
           onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)')}
         >
           <span className="hidden md:inline text-sm font-medium text-white">Open mail app</span>
-          <span className="text-white opacity-70 text-base">↗</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.7 }}>
+            <path d="M7 17L17 7M17 7H7M17 7v10" />
+          </svg>
         </a>
 
         <button
@@ -140,7 +145,9 @@ function GitHubCard({ className = '' }: { className?: string }) {
         <hr className="border-t border-[#E4E4E8] mb-3" />
         <div className="flex items-center justify-between">
           <p className="text-sm text-[#6B6B6B]">@henry9960</p>
-          <span className="text-xs text-[#ABABAB]">→</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ABABAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M7 17L17 7M17 7H7M17 7v10" />
+          </svg>
         </div>
       </div>
     </div>
