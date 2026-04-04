@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
+import DOMPurify from 'isomorphic-dompurify'
 
 const POSTS_DIR = path.join(process.cwd(), 'content/posts')
 
@@ -61,7 +62,7 @@ export function getPostBySlug(slug: string): Post {
   const file = path.join(POSTS_DIR, `${slug}.md`)
   const raw  = fs.readFileSync(file, 'utf-8')
   const { data, content } = matter(raw)
-  const html = marked(content) as string
+  const html = DOMPurify.sanitize(marked(content) as string)
 
   return {
     slug,
