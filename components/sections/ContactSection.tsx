@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import ExternalLinkButton from '@/components/ExternalLinkButton'
+import type { ContactContent } from '@/lib/types/content'
 
 /* ── Platform card (square) ───────────────────────────── */
 function PlatformCard({
@@ -65,9 +65,8 @@ function PlatformCard({
 }
 
 /* ── Email card (square, coloured) ───────────────────────── */
-function EmailCard({ className = '' }: { className?: string }) {
+function EmailCard({ email, className = '' }: { email: string; className?: string }) {
   const [copied, setCopied] = useState(false)
-  const email = 'harry@mugrid.ge'
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -82,7 +81,6 @@ function EmailCard({ className = '' }: { className?: string }) {
       className={`rounded-3xl p-4 md:p-6 flex flex-col justify-between aspect-square ${className}`}
       style={{ backgroundColor: '#0A0A0A' }}
     >
-      {/* Top */}
       <div>
         <h2 className="text-lg md:text-2xl font-semibold text-white">Email</h2>
         <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
@@ -90,7 +88,6 @@ function EmailCard({ className = '' }: { className?: string }) {
         </p>
       </div>
 
-      {/* Bottom CTAs */}
       <div className="flex md:flex-col gap-2">
         <a
           href={`mailto:${email}`}
@@ -122,15 +119,15 @@ function EmailCard({ className = '' }: { className?: string }) {
   )
 }
 
-/* ── GitHub coming soon (square) ─────────────────────────── */
-function GitHubCard({ className = '' }: { className?: string }) {
+/* ── Disabled social card ─────────────────────────────── */
+function DisabledCard({ platform, handle, className = '' }: { platform: string; handle: string; className?: string }) {
   return (
     <div
       className={`bg-[#F7F7F9] rounded-3xl p-4 md:p-6 flex flex-col justify-between aspect-square ${className}`}
       style={{ opacity: 0.4, pointerEvents: 'none', userSelect: 'none' }}
     >
       <div className="flex items-start justify-between">
-        <h2 className="text-lg md:text-2xl font-semibold text-[#0A0A0A]">GitHub</h2>
+        <h2 className="text-lg md:text-2xl font-semibold text-[#0A0A0A]">{platform}</h2>
         <span className="text-[10px] font-semibold text-[#8A8A8A] bg-[#EDEDED] rounded-full px-2.5 py-1">
           Soon
         </span>
@@ -138,7 +135,7 @@ function GitHubCard({ className = '' }: { className?: string }) {
       <div>
         <hr className="border-t border-[#E4E4E8] mb-3" />
         <div className="flex items-center justify-between">
-          <p className="text-sm text-[#6B6B6B]">@henry9960</p>
+          <p className="text-sm text-[#6B6B6B]">{handle}</p>
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ABABAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M7 17L17 7M17 7H7M17 7v10" />
           </svg>
@@ -148,29 +145,45 @@ function GitHubCard({ className = '' }: { className?: string }) {
   )
 }
 
+/* ── Instagram hover style ───────────────────────────────── */
+const instagramHoverBg = {
+  background:
+    'linear-gradient(135deg, #833AB4 0%, #C13584 35%, #E1306C 55%, #FD1D1D 78%, #FCB045 100%)',
+}
+
+const platformHoverColors: Record<string, string | Record<string, string>> = {
+  LinkedIn: '#0A66C2',
+  Instagram: instagramHoverBg,
+}
+
 /* ── Section ──────────────────────────────────────────────── */
-export default function ContactSection() {
+interface ContactSectionProps {
+  data: ContactContent
+}
+
+export default function ContactSection({ data }: ContactSectionProps) {
   return (
     <div className="grid grid-cols-12 gap-4">
-      <PlatformCard
-        className="col-span-6 md:col-span-3"
-        platform="LinkedIn"
-        handle="/in/harrymugridge"
-        href="https://linkedin.com/in/harrymugridge"
-        hoverBg="#0A66C2"
-      />
-      <PlatformCard
-        className="col-span-6 md:col-span-3"
-        platform="Instagram"
-        handle="@hyhb"
-        href="https://instagram.com/hyhb"
-        hoverBg={{
-          background:
-            'linear-gradient(135deg, #833AB4 0%, #C13584 35%, #E1306C 55%, #FD1D1D 78%, #FCB045 100%)',
-        }}
-      />
-      <EmailCard className="col-span-6 md:col-span-3" />
-      <GitHubCard className="col-span-6 md:col-span-3" />
+      {data.socials.map(social => (
+        social.enabled ? (
+          <PlatformCard
+            key={social.id}
+            className="col-span-6 md:col-span-3"
+            platform={social.platform}
+            handle={social.handle}
+            href={social.url}
+            hoverBg={platformHoverColors[social.platform] ?? '#0A0A0A'}
+          />
+        ) : (
+          <DisabledCard
+            key={social.id}
+            className="col-span-6 md:col-span-3"
+            platform={social.platform}
+            handle={social.handle}
+          />
+        )
+      ))}
+      <EmailCard email={data.email} className="col-span-6 md:col-span-3" />
     </div>
   )
 }

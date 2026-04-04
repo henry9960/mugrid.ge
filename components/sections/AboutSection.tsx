@@ -2,99 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import ExternalLinkButton from '@/components/ExternalLinkButton'
-
-const ABOUT_BLOCKS = [
-  {
-    label: 'Background',
-    text:  'Born in the UK, raised across Switzerland and Turkey, shaping a global perspective early on and led to me being trilingual in English, Turkish and German. Currently studying Business and Management at Royal Holloway, with prior internships at Amazon and Spotify.',
-  },
-  {
-    label: "What's next",
-    text:  'Currently interning at Intel and will be joining Microsoft this summer to work within their MSAI team. Looking forward to learning more about Product Management.',
-  },
-  {
-    label: 'Hobbies',
-    text:  'Hiking, climbing, photography, traveling and coffee.',
-  },
-]
-
-type TimelineState = 'active' | 'highlighted' | 'inactive'
-
-interface TimelineEntry {
-  company:     string
-  role:        string
-  description: string
-  period:      string
-  state:       TimelineState
-  detail?:     string
-  badgeLabel?: string
-  href?:       string
-}
-
-const TIMELINE: TimelineEntry[] = [
-  {
-    company:     'Microsoft',
-    role:        'Product Manager Intern',
-    description: 'Working on MSAI products.',
-    period:      'Summer 2026',
-    state:       'active',
-    href:        '/microsoft',
-  },
-  {
-    company:     'Intel',
-    role:        'Pricing Strategy Analyst Intern',
-    description: 'Working on pricing CPU strategies.',
-    period:      "Sep '25 – Jul '26",
-    state:       'inactive',
-  },
-  {
-    company:     'TikTok',
-    role:        'Merchant Strategy & Operations Intern',
-    description: 'Worked on strategic growth for merchants.',
-    period:      "Jun – Sep '25",
-    state:       'inactive',
-  },
-  {
-    company:     'Amazon',
-    role:        'Program Manager Intern',
-    description: 'Worked on improving carrier rail compliance.',
-    period:      "Feb – Jun '25",
-    state:       'inactive',
-  },
-  {
-    company:     'Spotify',
-    role:        'Product Manager Intern',
-    description: 'Worked on AI features for users.',
-    period:      "Jun – Aug '24",
-    state:       'highlighted',
-    detail:      'WIP — add detail about what you shipped, your impact, and the team you worked with.',
-  },
-  {
-    company:     'Royal Holloway',
-    role:        'Business and Management Student',
-    description: 'Expected to achieve a first class degree.',
-    period:      '2023 – 2027',
-    state:       'highlighted',
-    badgeLabel:  'University',
-    detail:      'WIP — add society roles, leadership positions, sports teams, and other campus activities here.',
-  },
-  {
-    company:     'Comikey',
-    role:        'Product Manager, Reader Experience',
-    description: 'Spearheaded improvements to the reader experience.',
-    period:      "May '21 – Jun '24",
-    state:       'inactive',
-  },
-  {
-    company:     'CatManga',
-    role:        'Founder & Product Manager',
-    description: 'Founded a non-profit localisation group.',
-    period:      "Jun '19 – Nov '21",
-    state:       'highlighted',
-    badgeLabel:  'Key exp.',
-    detail:      'Grew the team to over 50 members, and launched a fan publishing platform which localised over 60 Japanese comics, generating over 35 million monthly page views.',
-  },
-]
+import type { AboutContent, TimelineState } from '@/lib/types/content'
 
 const MS_NODE_COLORS = ['#F25022', '#7FBA00', '#00A4EF', '#FFB900']
 
@@ -135,7 +43,6 @@ function NeuralNetworkCanvas() {
         if (n.opacity < 0.15) { n.opacity = 0.15; n.opacityDir =  1 }
       }
 
-      // lines
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x
@@ -152,11 +59,9 @@ function NeuralNetworkCanvas() {
         }
       }
 
-      // nodes
       for (const n of nodes) {
         ctx!.beginPath()
         ctx!.arc(n.x, n.y, n.r, 0, Math.PI * 2)
-        // parse hex colour → rgba with opacity
         const r = parseInt(n.color.slice(1, 3), 16)
         const g = parseInt(n.color.slice(3, 5), 16)
         const b = parseInt(n.color.slice(5, 7), 16)
@@ -210,7 +115,6 @@ function Dot({ state }: { state: TimelineState }) {
       />
     )
   }
-  // inactive
   return (
     <div
       className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0 border-2"
@@ -219,7 +123,11 @@ function Dot({ state }: { state: TimelineState }) {
   )
 }
 
-export default function AboutSection() {
+interface AboutSectionProps {
+  data: AboutContent
+}
+
+export default function AboutSection({ data }: AboutSectionProps) {
   const [expanded, setExpanded] = useState<string | null>(null)
 
   return (
@@ -230,8 +138,8 @@ export default function AboutSection() {
         <h2 className="text-2xl font-semibold text-[#0A0A0A]">About</h2>
         <Divider />
         <div className="space-y-5">
-          {ABOUT_BLOCKS.map((block) => (
-            <div key={block.label}>
+          {data.blocks.map((block) => (
+            <div key={block.id}>
               <p className="text-[10px] font-semibold uppercase tracking-widest text-[#ABABAB] mb-1.5">
                 {block.label}
               </p>
@@ -242,7 +150,7 @@ export default function AboutSection() {
             <p className="text-[10px] font-semibold uppercase tracking-widest text-[#ABABAB] mb-1.5">
               Location
             </p>
-            <p className="text-[15px] text-[#6B6B6B]">London, United Kingdom</p>
+            <p className="text-[15px] text-[#6B6B6B]">{data.location}</p>
           </div>
         </div>
       </div>
@@ -270,15 +178,14 @@ export default function AboutSection() {
               }
             `}</style>
             <div className="timeline-scroll space-y-0 px-1">
-              {TIMELINE.map((item, i) => {
-                const isLast       = i === TIMELINE.length - 1
-                const isExpanded   = expanded === item.company
-                const isActive     = item.state === 'active'
+              {data.timeline.map((item, i) => {
+                const isLast        = i === data.timeline.length - 1
+                const isExpanded    = expanded === item.id
+                const isActive      = item.state === 'active'
                 const isHighlighted = item.state === 'highlighted'
-                const isInactive   = item.state === 'inactive'
 
                 return (
-                  <div key={item.company} className="flex gap-4">
+                  <div key={item.id} className="flex gap-4">
 
                     {/* ── Dot + line ── */}
                     <div className="flex flex-col items-center">
@@ -294,7 +201,6 @@ export default function AboutSection() {
                     {/* ── Content ── */}
                     <div className={`flex-1 min-w-0 ${isLast ? 'pb-8' : 'pb-4'}`}>
 
-                      {/* HIGHLIGHTED: card treatment */}
                       {isHighlighted ? (
                         <div
                           className="rounded-xl border cursor-pointer select-none"
@@ -303,9 +209,8 @@ export default function AboutSection() {
                             borderColor: '#E4E4E8',
                             padding: '10px 12px',
                           }}
-                          onClick={() => setExpanded(isExpanded ? null : item.company)}
+                          onClick={() => setExpanded(isExpanded ? null : item.id)}
                         >
-                          {/* Header row */}
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0 overflow-hidden">
                               <div className="flex items-center gap-1.5 mb-0.5">
@@ -338,7 +243,6 @@ export default function AboutSection() {
                             </div>
                           </div>
 
-                          {/* Expandable detail */}
                           <div
                             style={{
                               display: 'grid',
@@ -356,9 +260,7 @@ export default function AboutSection() {
                         </div>
 
                       ) : isActive ? (
-                        /* ACTIVE: spinning MS gradient border card */
                         <div style={{ position: 'relative', borderRadius: '12px', padding: '1px', overflow: 'hidden' }}>
-                          {/* Spinning conic gradient — creates the animated border */}
                           <div style={{
                             position: 'absolute',
                             width: '300%', height: '300%',
@@ -366,7 +268,6 @@ export default function AboutSection() {
                             background: 'conic-gradient(from 0deg, #F2502260, #FFB90060, #7FBA0060, #00A4EF60, #F2502260)',
                             animation: 'ms-border-spin 6s linear infinite',
                           }} />
-                          {/* Light card interior */}
                           <div style={{
                             position: 'relative',
                             borderRadius: '10.5px',
@@ -409,7 +310,6 @@ export default function AboutSection() {
                         </div>
 
                       ) : (
-                        /* INACTIVE: plain muted row */
                         <div className="flex items-start justify-between">
                           <div className="min-w-0 overflow-hidden">
                             <div className="flex items-center gap-2 mb-0.5">
@@ -432,7 +332,6 @@ export default function AboutSection() {
             </div>
           </div>
 
-          {/* Fade + scroll cue */}
           <div
             className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none flex flex-col items-center justify-end pb-1"
             style={{ background: 'linear-gradient(to bottom, transparent, #F7F7F9)' }}

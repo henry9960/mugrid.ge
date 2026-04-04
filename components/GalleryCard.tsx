@@ -1,19 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-
-// ── Photo library ─────────────────────────────────────────────────────────────
-// Place photos in /public/gallery/ and add entries below.
-// The first entry is always shown first.
-//
-const PHOTOS: Array<{ src: string; caption?: string }> = [
-  { src: '/gallery/photo1.jpg' },
-  { src: '/gallery/photo2.JPG' },
-  { src: '/gallery/photo3.JPG' },
-  { src: '/gallery/photo4.JPG' },
-  { src: '/gallery/photo5.JPG' },
-]
-// ─────────────────────────────────────────────────────────────────────────────
+import type { GalleryPhoto } from '@/lib/types/content'
 
 const MAX_DOTS = 7
 
@@ -46,7 +34,8 @@ function NavButton({ onClick, children }: { onClick: () => void; children: React
   )
 }
 
-export default function GalleryCard() {
+export default function GalleryCard({ photos }: { photos: GalleryPhoto[] }) {
+  const PHOTOS = photos
   const [idx, setIdx]         = useState(0)
   const [flashKey, setFlashKey] = useState(0)   // increment to retrigger flash
   const [focusKey, setFocusKey] = useState(0)   // increment to retrigger reticle

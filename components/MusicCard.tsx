@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import type { MusicTrack } from '@/lib/types/content'
 
 interface FloatingNote {
   id:       number
@@ -15,29 +16,6 @@ interface FloatingNote {
   color:    string
 }
 
-// ── Track library — place files in /public/music/ ─────────────────────────────
-// albumArtUrl: e.g. '/music/art/after-hours.jpg' (null = gradient placeholder)
-// src:         e.g. '/music/blinding-lights.mp3'
-const TRACKS = [
-  {
-    title:       'Home Run',
-    artist:      'The Man The Myth The Meatslab',
-    album:       'Home Run',
-    albumArtUrl: '/music/art/Home Run cover.jpg' as string | null,
-    src:         '/music/The Man The Myth The Meatslab - Home Run (SPOTISAVER).mp3',
-    startTime:   20,   // ← seconds to start playback from (e.g. 30 = start at 0:30)
-  },
-  
-  {
-    title:       'Blue Spring',
-    artist:      'Nathan Micay',
-    album:       'Blue Spring',
-    albumArtUrl: '/music/art/Blue Spring cover.jpg' as string | null,
-    src:         '/music/Nathan Micay - Blue Spring (SPOTISAVER).mp3',
-    startTime:   0,   // ← seconds to start playback from (e.g. 30 = start at 0:30)
-  },
-]
-// ─────────────────────────────────────────────────────────────────────────────
 
 function fmt(s: number) {
   if (!isFinite(s) || s < 0) return '0:00'
@@ -117,7 +95,8 @@ function EqBars({ playing }: { playing: boolean }) {
 const SYMBOLS = ['♪', '♫', '♩', '♬']
 let noteUid = 0
 
-export default function MusicCard() {
+export default function MusicCard({ tracks }: { tracks: MusicTrack[] }) {
+  const TRACKS = tracks
   const [trackIdx,     setTrackIdx]     = useState(0)
   const [isPlaying,    setIsPlaying]    = useState(false)
   const [currentTime,  setCurrentTime]  = useState(0)
@@ -126,10 +105,11 @@ export default function MusicCard() {
   const audioRef    = useRef<HTMLAudioElement | null>(null)
   const progressRef = useRef<HTMLDivElement>(null)
 
-  const track = TRACKS[trackIdx]
+  const track = TRACKS[trackIdx] ?? null
 
   // Rebuild audio element whenever the track changes
   useEffect(() => {
+    if (!track) return
     const audio = new Audio(track.src)
     audioRef.current = audio
 
@@ -153,7 +133,7 @@ export default function MusicCard() {
       audio.removeEventListener('loadedmetadata', onMeta)
       audio.removeEventListener('ended',          onEnded)
     }
-  }, [trackIdx, track.src])
+  }, [trackIdx, track?.src])
 
   // Spawn floating music notes while playing
   useEffect(() => {
@@ -227,6 +207,12 @@ export default function MusicCard() {
   }, [duration])
 
   const pct = duration > 0 ? (currentTime / duration) * 100 : 0
+
+  if (!track) {
+    return (
+      <div className="aspect-square rounded-3xl" style={{ backgroundColor: '#1a1a1a' }} />
+    )
+  }
 
   return (
     <>

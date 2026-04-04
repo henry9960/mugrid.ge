@@ -1,0 +1,9 @@
+{
+  "photos": [
+    { "src": "/gallery/photo1.jpg" },
+    { "src": "/gallery/photo2.JPG" },
+    { "src": "/gallery/photo3.JPG" },
+    { "src": "/gallery/photo4.JPG" },
+    { "src": "/gallery/photo5.JPG" }
+  ]
+}

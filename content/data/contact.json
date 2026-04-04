@@ -1,0 +1,27 @@
+{
+  "sectionHeading": "Contact me",
+  "email": "harry@mugrid.ge",
+  "socials": [
+    {
+      "id": "linkedin",
+      "platform": "LinkedIn",
+      "handle": "/in/harrymugridge",
+      "url": "https://linkedin.com/in/harrymugridge",
+      "enabled": true
+    },
+    {
+      "id": "instagram",
+      "platform": "Instagram",
+      "handle": "@hyhb",
+      "url": "https://instagram.com/hyhb",
+      "enabled": true
+    },
+    {
+      "id": "github",
+      "platform": "GitHub",
+      "handle": "@henry9960",
+      "url": "https://github.com/henry9960",
+      "enabled": false
+    }
+  ]
+}

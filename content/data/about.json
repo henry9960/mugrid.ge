@@ -1,0 +1,97 @@
+{
+  "sectionHeading": "More about me",
+  "blocks": [
+    {
+      "id": "background",
+      "label": "Background",
+      "text": "Born in the UK, raised across Switzerland and Turkey, shaping a global perspective early on and led to me being trilingual in English, Turkish and German. Currently studying Business and Management at Royal Holloway, with prior internships at Amazon and Spotify."
+    },
+    {
+      "id": "whats_next",
+      "label": "What's next",
+      "text": "Currently interning at Intel and will be joining Microsoft this summer to work within their MSAI team. Looking forward to learning more about Product Management."
+    },
+    {
+      "id": "hobbies",
+      "label": "Hobbies",
+      "text": "Hiking, climbing, photography, traveling and coffee."
+    }
+  ],
+  "location": "London, United Kingdom",
+  "timeline": [
+    {
+      "id": "microsoft",
+      "company": "Microsoft",
+      "role": "Product Manager Intern",
+      "description": "Incoming Product intern in the MSAI team.",
+      "period": "Summer 2026",
+      "state": "active",
+      "href": "/microsoft",
+      "learning": "Vibecoding and using Claude!",
+      "location": "London, United Kingdom",
+      "logoUrl": null
+    },
+    {
+      "id": "intel",
+      "company": "Intel",
+      "role": "Pricing Strategy Analyst Intern",
+      "description": "Working on pricing CPU strategies.",
+      "period": "Sep '25 – Jul '26",
+      "state": "inactive"
+    },
+    {
+      "id": "tiktok",
+      "company": "TikTok",
+      "role": "Merchant Strategy & Operations Intern",
+      "description": "Worked on strategic growth for merchants.",
+      "period": "Jun – Sep '25",
+      "state": "inactive"
+    },
+    {
+      "id": "amazon",
+      "company": "Amazon",
+      "role": "Program Manager Intern",
+      "description": "Worked on improving carrier rail compliance.",
+      "period": "Feb – Jun '25",
+      "state": "inactive"
+    },
+    {
+      "id": "spotify",
+      "company": "Spotify",
+      "role": "Product Manager Intern",
+      "description": "Worked on AI features for users.",
+      "period": "Jun – Aug '24",
+      "state": "highlighted",
+      "badgeLabel": "Key exp.",
+      "detail": "WIP — add detail about what you shipped, your impact, and the team you worked with."
+    },
+    {
+      "id": "royal_holloway",
+      "company": "Royal Holloway",
+      "role": "Business and Management Student",
+      "description": "Expected to achieve a first class degree.",
+      "period": "2023 – 2027",
+      "state": "highlighted",
+      "badgeLabel": "University",
+      "detail": "WIP — add society roles, leadership positions, sports teams, and other campus activities here."
+    },
+    {
+      "id": "comikey",
+      "company": "Comikey",
+      "role": "Product Manager, Reader Experience",
+      "description": "Spearheaded improvements to the reader experience.",
+      "period": "May '21 – Jun '24",
+      "state": "inactive"
+    },
+    {
+      "id": "catmanga",
+      "company": "CatManga",
+      "role": "Founder & Product Manager",
+      "description": "Founded a non-profit localisation group.",
+      "period": "Jun '19 – Nov '21",
+      "state": "highlighted",
+      "badgeLabel": "Key exp.",
+      "detail": "Grew the team to over 50 members, and launched a fan publishing platform which localised over 60 Japanese comics, generating over 35 million monthly page views."
+    }
+  ]
+}

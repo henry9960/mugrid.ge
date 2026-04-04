@@ -2,46 +2,42 @@
 
 import { useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import type { TimelineEntry } from '@/lib/types/content'
 
 interface Ripple {
   id: number
-  x: number   // % within card
+  x: number
   y: number
-  size: number // px — final diameter
+  size: number
   duration: number
   delay: number
 }
 
 let uid = 0
 
-export default function WhatImUpToCard() {
-  // Glow stays at the last mouse position — never resets
-  const [pos, setPos]       = useState({ x: 82, y: 14 })
+interface WhatImUpToCardProps {
+  entry: TimelineEntry
+}
+
+export default function WhatImUpToCard({ entry }: WhatImUpToCardProps) {
+  const [pos, setPos]         = useState({ x: 82, y: 14 })
   const [ripples, setRipples] = useState<Ripple[]>([])
-  const cardRef             = useRef<HTMLDivElement>(null)
-  const lastSpawnAt         = useRef(0)
+  const cardRef               = useRef<HTMLDivElement>(null)
+  const lastSpawnAt           = useRef(0)
 
   const spawnRipples = useCallback((x: number, y: number) => {
     const now = Date.now()
-    if (now - lastSpawnAt.current < 130) return   // throttle
+    if (now - lastSpawnAt.current < 130) return
     lastSpawnAt.current = now
 
-    // Spawn two concentric rings with slightly different timing
     const pairs: Array<{ size: number; duration: number; delay: number }> = [
       { size: 220, duration: 1000, delay: 0   },
       { size: 340, duration: 1300, delay: 120 },
     ]
 
-    const newRipples: Ripple[] = pairs.map(p => ({
-      id: uid++,
-      x,
-      y,
-      ...p,
-    }))
-
+    const newRipples: Ripple[] = pairs.map(p => ({ id: uid++, x, y, ...p }))
     setRipples(prev => [...prev, ...newRipples])
 
-    // Clean up after the longest ring finishes
     const maxLifetime = Math.max(...pairs.map(p => p.duration + p.delay)) + 50
     setTimeout(() => {
       const ids = new Set(newRipples.map(r => r.id))
@@ -102,30 +98,43 @@ export default function WhatImUpToCard() {
       {/* ── Role ─────────────────────────────────────────── */}
       <div className="relative z-10">
         <div className="flex items-center gap-2">
-          <p className="text-xl font-semibold text-white leading-tight">Product Manager Intern</p>
+          <p className="text-xl font-semibold text-white leading-tight">{entry.role}</p>
+          {entry.href && (
           <Link
-            href="/microsoft"
+            href={entry.href}
             onClick={e => e.stopPropagation()}
             className="flex items-center justify-center w-6 h-6 rounded-full flex-shrink-0 transition-all duration-150"
             style={{ backgroundColor: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.22)'; (e.currentTarget as HTMLElement).style.color = '#fff' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.12)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.7)' }}
+            onMouseEnter={e => {
+              ;(e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.22)'
+              ;(e.currentTarget as HTMLElement).style.color = '#fff'
+            }}
+            onMouseLeave={e => {
+              ;(e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.12)'
+              ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.7)'
+            }}
           >
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M7 17L17 7M17 7H7M17 7v10" />
             </svg>
           </Link>
+          )}
         </div>
         <div className="flex items-center gap-2 mt-1.5">
-          <div className="grid grid-cols-2 gap-[2px] flex-shrink-0">
-            <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#F25022' }} />
-            <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#7FBA00' }} />
-            <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#00A4EF' }} />
-            <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#FFB900' }} />
-          </div>
+          {entry.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={entry.logoUrl} alt={entry.company} className="w-5 h-5 object-contain flex-shrink-0" />
+          ) : (
+            <div className="grid grid-cols-2 gap-[2px] flex-shrink-0">
+              <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#F25022' }} />
+              <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#7FBA00' }} />
+              <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#00A4EF' }} />
+              <div className="w-2.5 h-2.5 rounded-[2px]" style={{ backgroundColor: '#FFB900' }} />
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-              Microsoft · Summer 2026
+              {entry.company} · {entry.period}
             </p>
             <span
               className="inline-flex items-center gap-1.5 text-[10px] font-semibold rounded-full px-2.5 py-1"
@@ -137,28 +146,32 @@ export default function WhatImUpToCard() {
           </div>
         </div>
         <p className="text-xs mt-3 leading-relaxed" style={{ color: 'rgba(255,255,255,0.38)' }}>
-          Incoming Product intern in the MSAI team.
+          {entry.description}
         </p>
       </div>
 
       {/* ── Meta row ─────────────────────────────────────── */}
       <div className="grid grid-cols-2 pt-1 relative z-10">
+        {entry.learning && (
         <div>
           <p className="text-[9px] font-semibold uppercase tracking-widest mb-0.5" style={{ color: 'rgba(167,243,208,0.45)' }}>
             Learning
           </p>
           <p className="text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>
-            Vibecoding and using Claude!
+            {entry.learning}
           </p>
         </div>
+        )}
+        {entry.location && (
         <div>
           <p className="text-[9px] font-semibold uppercase tracking-widest mb-0.5" style={{ color: 'rgba(167,243,208,0.45)' }}>
             Location
           </p>
           <p className="text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>
-            London, United Kingdom
+            {entry.location}
           </p>
         </div>
+        )}
       </div>
     </div>
   )
