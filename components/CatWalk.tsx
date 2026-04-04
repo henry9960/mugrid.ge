@@ -9,7 +9,7 @@ export default function CatWalk() {
     if (sessionStorage.getItem('cat-walked')) return
     sessionStorage.setItem('cat-walked', '1')
     setVisible(true)
-    const t = setTimeout(() => setVisible(false), 11000)
+    const t = setTimeout(() => setVisible(false), 12000)
     return () => clearTimeout(t)
   }, [])
 
@@ -19,28 +19,27 @@ export default function CatWalk() {
     <>
       <style>{`
         @keyframes cat-stroll {
-          from { transform: translateX(-110px) }
-          to   { transform: translateX(calc(100vw + 110px)) }
+          from { transform: translateX(calc(100vw + 130px)) }
+          to   { transform: translateX(-130px) }
         }
         @keyframes cat-bob {
           0%, 100% { transform: translateY(0px) }
-          50%       { transform: translateY(-4px) }
+          50%       { transform: translateY(-5px) }
         }
-        @keyframes tail-wag {
-          0%, 100% { transform-origin: 4px 0px; transform: rotate(-15deg) }
-          50%       { transform-origin: 4px 0px; transform: rotate(15deg) }
+        @keyframes tail-sway {
+          0%, 100% { transform: rotate(-18deg) }
+          50%       { transform: rotate(14deg) }
         }
-        @keyframes leg-a {
-          0%, 100% { transform-origin: top center; transform: rotate(-18deg) }
-          50%       { transform-origin: top center; transform: rotate(18deg) }
+        @keyframes leg-up {
+          0%, 100% { transform: translateY(0px) }
+          50%       { transform: translateY(-8px) }
         }
-        @keyframes leg-b {
-          0%, 100% { transform-origin: top center; transform: rotate(18deg) }
-          50%       { transform-origin: top center; transform: rotate(-18deg) }
+        @keyframes leg-down {
+          0%, 100% { transform: translateY(-8px) }
+          50%       { transform: translateY(0px) }
         }
       `}</style>
 
-      {/* Walking container — moves across the screen */}
       <div
         style={{
           position: 'fixed',
@@ -48,61 +47,88 @@ export default function CatWalk() {
           left: 0,
           zIndex: 9999,
           pointerEvents: 'none',
-          animation: 'cat-stroll 10s linear forwards',
+          animation: 'cat-stroll 11s linear forwards',
         }}
       >
-        {/* Bob wrapper */}
-        <div style={{ animation: 'cat-bob 0.4s ease-in-out infinite' }}>
-          <svg width="100" height="80" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Body bob */}
+        <div style={{ animation: 'cat-bob 0.38s ease-in-out infinite' }}>
+          <svg width="130" height="100" viewBox="0 0 130 100" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-            {/* Tail */}
-            <g style={{ animation: 'tail-wag 0.6s ease-in-out infinite' }}>
+            {/* ── Tail (right side, curves upward) ── */}
+            <g style={{ transformOrigin: '82px 52px', animation: 'tail-sway 0.55s ease-in-out infinite' }}>
               <path
-                d="M 76 44 C 92 36 94 22 86 12"
-                stroke="#3d3d3d" strokeWidth="4.5" strokeLinecap="round" fill="none"
+                d="M 82 52 C 104 46 110 30 100 16 C 97 10 104 6 106 11"
+                stroke="#c47c2a" strokeWidth="6" strokeLinecap="round" fill="none"
               />
+              {/* Tail tip — lighter */}
+              <circle cx="106" cy="11" r="4" fill="#f5c06a" />
             </g>
 
-            {/* Body */}
-            <ellipse cx="54" cy="50" rx="24" ry="17" fill="#3d3d3d" />
+            {/* ── Body ── */}
+            <ellipse cx="62" cy="60" rx="30" ry="22" fill="#e8a83a" />
 
-            {/* Head */}
-            <circle cx="20" cy="40" r="17" fill="#3d3d3d" />
+            {/* Belly patch */}
+            <ellipse cx="55" cy="64" rx="16" ry="14" fill="#fde68a" />
 
-            {/* Ears */}
-            <polygon points="8,26 13,11 23,26"  fill="#3d3d3d" />
-            <polygon points="20,26 25,11 34,26" fill="#3d3d3d" />
+            {/* Tabby stripes */}
+            <path d="M 52 44 Q 62 40 72 44" stroke="#c47c2a" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity="0.7" />
+            <path d="M 55 51 Q 64 47 74 51" stroke="#c47c2a" strokeWidth="2"   fill="none" strokeLinecap="round" opacity="0.6" />
+
+            {/* ── Head ── */}
+            <circle cx="22" cy="48" r="22" fill="#e8a83a" />
+
+            {/* Cheek puffs */}
+            <ellipse cx="8"  cy="55" rx="6" ry="5" fill="#f0b84a" opacity="0.6" />
+
+            {/* Forehead stripe */}
+            <path d="M 14 30 Q 22 27 30 30" stroke="#c47c2a" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6" />
+
+            {/* ── Ears ── */}
+            <polygon points="7,30 13,12 25,30"  fill="#e8a83a" />
+            <polygon points="22,30 28,12 40,30" fill="#e8a83a" />
             {/* Inner ears */}
-            <polygon points="10,26 14,16 22,26"  fill="#fda4af" />
-            <polygon points="22,26 26,16 32,26" fill="#fda4af" />
+            <polygon points="10,30 15,18 24,30"  fill="#fda4af" />
+            <polygon points="24,30 29,18 38,30" fill="#fda4af" />
 
-            {/* Eye */}
-            <ellipse cx="12" cy="38" rx="3.5" ry="4.5" fill="white" />
-            <ellipse cx="12" cy="38" rx="2"   ry="3.5" fill="#1a1a1a" />
-            <circle  cx="11" cy="37" r="0.8"  fill="white" />
+            {/* ── Eye ── */}
+            <ellipse cx="12" cy="46" rx="5.5" ry="6" fill="#2d6a2d" />
+            <ellipse cx="12" cy="46" rx="3"   ry="5" fill="#111" />
+            {/* Shine */}
+            <circle cx="10" cy="44" r="1.4" fill="white" />
+            <circle cx="14" cy="48" r="0.7" fill="white" opacity="0.6" />
 
-            {/* Nose */}
-            <polygon points="5.5,44 8,46.5 3,46.5" fill="#fda4af" />
+            {/* ── Nose ── */}
+            <polygon points="5,53 8,56.5 2,56.5" fill="#fda4af" />
 
-            {/* Mouth */}
-            <path d="M 3.5 46.5 Q 5.5 49 8 46.5" stroke="#666" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+            {/* ── Mouth ── */}
+            <path d="M 2.5 56.5 Q 5 60 8 56.5" stroke="#b06020" strokeWidth="1.4" fill="none" strokeLinecap="round" />
 
-            {/* Whiskers */}
-            <line x1="0"  y1="43" x2="5"  y2="44" stroke="#aaa" strokeWidth="0.9" />
-            <line x1="0"  y1="46" x2="5"  y2="46" stroke="#aaa" strokeWidth="0.9" />
-            <line x1="9"  y1="43" x2="4"  y2="41" stroke="#aaa" strokeWidth="0.9" />
+            {/* ── Whiskers ── */}
+            <line x1="0"  y1="52" x2="5"  y2="53.5" stroke="rgba(255,255,255,0.7)" strokeWidth="1.1" />
+            <line x1="0"  y1="56" x2="5"  y2="56"   stroke="rgba(255,255,255,0.7)" strokeWidth="1.1" />
+            <line x1="9"  y1="52" x2="3"  y2="50"   stroke="rgba(255,255,255,0.7)" strokeWidth="1.1" />
+            <line x1="0"  y1="60" x2="5"  y2="58.5" stroke="rgba(255,255,255,0.5)" strokeWidth="0.9" />
 
-            {/* Back legs */}
-            <rect x="62" y="63" width="8" height="14" rx="4" fill="#2e2e2e"
-              style={{ animation: 'leg-b 0.4s ease-in-out infinite' }} />
-            <rect x="51" y="63" width="8" height="14" rx="4" fill="#3d3d3d"
-              style={{ animation: 'leg-a 0.4s ease-in-out infinite' }} />
+            {/* ── Back legs ── */}
+            <g style={{ animation: 'leg-down 0.38s ease-in-out infinite' }}>
+              <rect x="70" y="76" width="10" height="18" rx="5" fill="#c47c2a" />
+              <ellipse cx="75" cy="94" rx="6" ry="3.5" fill="#b06020" /> {/* paw */}
+            </g>
+            <g style={{ animation: 'leg-up 0.38s ease-in-out infinite' }}>
+              <rect x="57" y="76" width="10" height="18" rx="5" fill="#e8a83a" />
+              <ellipse cx="62" cy="94" rx="6" ry="3.5" fill="#c47c2a" />
+            </g>
 
-            {/* Front legs */}
-            <rect x="36" y="63" width="8" height="14" rx="4" fill="#2e2e2e"
-              style={{ animation: 'leg-a 0.4s ease-in-out infinite' }} />
-            <rect x="25" y="63" width="8" height="14" rx="4" fill="#3d3d3d"
-              style={{ animation: 'leg-b 0.4s ease-in-out infinite' }} />
+            {/* ── Front legs ── */}
+            <g style={{ animation: 'leg-up 0.38s ease-in-out infinite' }}>
+              <rect x="37" y="74" width="10" height="18" rx="5" fill="#c47c2a" />
+              <ellipse cx="42" cy="92" rx="6" ry="3.5" fill="#b06020" />
+            </g>
+            <g style={{ animation: 'leg-down 0.38s ease-in-out infinite' }}>
+              <rect x="24" y="74" width="10" height="18" rx="5" fill="#e8a83a" />
+              <ellipse cx="29" cy="92" rx="6" ry="3.5" fill="#c47c2a" />
+            </g>
+
           </svg>
         </div>
       </div>
