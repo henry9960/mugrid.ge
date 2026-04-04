@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAllPosts } from '@/lib/posts'
+import { githubWriteFile, githubDeleteFile } from '@/lib/github-content'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
       tags: tags ?? [],
       description: description ?? '',
     })
-    fs.writeFileSync(filePath, fileContent, 'utf-8')
+    await githubWriteFile(`content/posts/${slug}.md`, fileContent, `Add post: ${title}`)
     return NextResponse.json({ success: true, slug })
   } catch {
     return NextResponse.json({ error: 'Failed to create post' }, { status: 500 })
@@ -69,6 +70,7 @@ export async function PUT(request: NextRequest) {
   try {
     const { slug, title, date, tags, description, body, newSlug } = await request.json()
     const targetSlug = newSlug && newSlug !== slug ? newSlug : slug
+
     const oldPath = path.join(POSTS_DIR, `${slug}.md`)
     const newPath = path.join(POSTS_DIR, `${targetSlug}.md`)
 
@@ -82,10 +84,13 @@ export async function PUT(request: NextRequest) {
       tags: tags ?? [],
       description: description ?? '',
     })
-    fs.writeFileSync(newPath, fileContent, 'utf-8')
+
+    await githubWriteFile(`content/posts/${targetSlug}.md`, fileContent, `Update post: ${title}`)
+
     if (targetSlug !== slug && fs.existsSync(oldPath)) {
-      fs.unlinkSync(oldPath)
+      await githubDeleteFile(`content/posts/${slug}.md`, `Rename post: ${slug} → ${targetSlug}`)
     }
+
     return NextResponse.json({ success: true, slug: targetSlug })
   } catch {
     return NextResponse.json({ error: 'Failed to update post' }, { status: 500 })
@@ -101,6 +106,7 @@ export async function DELETE(req: NextRequest) {
   if (!fs.existsSync(filePath)) {
     return NextResponse.json({ error: 'Post not found' }, { status: 404 })
   }
-  fs.unlinkSync(filePath)
+
+  await githubDeleteFile(`content/posts/${slug}.md`, `Delete post: ${slug}`)
   return NextResponse.json({ success: true })
 }

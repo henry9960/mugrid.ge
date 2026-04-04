@@ -14,7 +14,7 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const data = (await request.json()) as ThoughtsContent
-    writeContent('thoughts.json', data)
+    await writeContent('thoughts.json', data)
     return NextResponse.json({ success: true })
   } catch {
     return NextResponse.json({ error: 'Failed to save content' }, { status: 500 })

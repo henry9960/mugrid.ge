@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { githubWriteFile } from '@/lib/github-content'
 
 const DATA_DIR = path.join(process.cwd(), 'content/data')
 
@@ -13,10 +14,7 @@ export function readContent<T>(file: string, fallback?: T): T {
   return JSON.parse(raw) as T
 }
 
-export function writeContent(file: string, data: unknown): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true })
-  }
-  const filePath = path.join(DATA_DIR, file)
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8')
+export async function writeContent(file: string, data: unknown): Promise<void> {
+  const content = JSON.stringify(data, null, 2)
+  await githubWriteFile(`content/data/${file}`, content, `Update ${file} via admin`)
 }

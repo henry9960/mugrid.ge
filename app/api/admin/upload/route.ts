@@ -1,5 +1,3 @@
-import { writeFileSync, mkdirSync } from 'fs'
-import { join, extname } from 'path'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
@@ -10,21 +8,25 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'No file provided' }, { status: 400 })
   }
 
-  const ext = extname(file.name).toLowerCase() || '.png'
-  const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.gif']
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? 'png'
+  const allowed = ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif']
   if (!allowed.includes(ext)) {
     return NextResponse.json({ error: 'File type not allowed' }, { status: 400 })
   }
 
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+
+  // On Vercel use Blob storage; locally fall back to /public/logos/
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const { put } = await import('@vercel/blob')
+    const blob = await put(`logos/${safeName}`, file, { access: 'public', addRandomSuffix: false })
+    return NextResponse.json({ url: blob.url })
+  }
+
+  const { writeFileSync, mkdirSync } = await import('fs')
+  const { join } = await import('path')
   const dir = join(process.cwd(), 'public', 'logos')
   mkdirSync(dir, { recursive: true })
-
-  // Use a stable filename based on the original name so re-uploads overwrite
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-  const dest = join(dir, safeName)
-
-  const buffer = Buffer.from(await file.arrayBuffer())
-  writeFileSync(dest, buffer)
-
+  writeFileSync(join(dir, safeName), Buffer.from(await file.arrayBuffer()))
   return NextResponse.json({ url: `/logos/${safeName}` })
 }

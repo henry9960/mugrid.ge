@@ -11,6 +11,6 @@ export async function GET() {
 
 export async function PUT(req: Request) {
   const body = await req.json() as GalleryContent
-  writeContent('gallery.json', body)
+  await writeContent('gallery.json', body)
   return NextResponse.json({ ok: true })
 }

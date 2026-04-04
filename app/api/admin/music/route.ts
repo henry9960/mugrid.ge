@@ -11,6 +11,6 @@ export async function GET() {
 
 export async function PUT(req: Request) {
   const body = await req.json() as MusicContent
-  writeContent('music.json', body)
+  await writeContent('music.json', body)
   return NextResponse.json({ ok: true })
 }
