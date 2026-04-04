@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { marked } from 'marked'
-import DOMPurify from 'isomorphic-dompurify'
 
 interface MarkdownEditorProps {
   value: string
@@ -65,7 +64,7 @@ export default function MarkdownEditor({
             <article
               className="prose"
               style={{ maxWidth: 'none' }}
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked(value) as string) }}
+              dangerouslySetInnerHTML={{ __html: marked(value) as string }}
             />
           ) : (
             <p className="text-sm" style={{ color: '#ABABAB' }}>
