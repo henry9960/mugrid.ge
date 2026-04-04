@@ -1,29 +1,29 @@
 {
-  "sectionHeading": "More about me",
+  "sectionHeading": "More about m",
   "blocks": [
     {
       "id": "background",
       "label": "Background",
-      "text": "Born in the UK, raised across Switzerland and Turkey, shaping a global perspective early on and led to me being trilingual in English, Turkish and German. Currently studying Business and Management at Royal Holloway, with prior internships at Amazon and Spotify."
+      "text": "Born in the UK, raised across Switzerland and Turkey, shaping a global perspective early on and led to me being trilingual in English, Turkish and German. Currently studying Business and Management at Royal Holloway, with prior internships at Amazon and Spotify"
     },
     {
       "id": "whats_next",
       "label": "What's next",
-      "text": "Currently interning at Intel and will be joining Microsoft this summer to work within their MSAI team. Looking forward to learning more about Product Management."
+      "text": "Currently interning at Intel and will be joining Microsoft this summer to work within their MSAI team. Looking forward to learning more about Product Management"
     },
     {
       "id": "hobbies",
       "label": "Hobbies",
-      "text": "Hiking, climbing, photography, traveling and coffee."
+      "text": "Hiking, climbing, photography, traveling and coffee"
     }
   ],
-  "location": "London, United Kingdom",
+  "location": "London, United Kingdo",
   "timeline": [
     {
       "id": "microsoft",
-      "company": "Microsoft",
+      "company": "Microsof",
       "role": "Product Manager Intern",
-      "description": "Incoming Product intern in the MSAI team.",
+      "description": "Incoming Product intern in the MSAI team",
       "period": "Summer 2026",
       "state": "active",
       "href": "/microsoft",
