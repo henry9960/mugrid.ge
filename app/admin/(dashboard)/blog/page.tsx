@@ -22,7 +22,7 @@ export default function AdminBlogPage() {
     if (!deleteSlug) return
     setDeleting(true)
     try {
-      await fetch(`/api/admin/posts/${deleteSlug}`, { method: 'DELETE' })
+      await fetch(`/api/admin/posts?slug=${deleteSlug}`, { method: 'DELETE' })
       setDeleteSlug(null)
       load()
     } finally {
