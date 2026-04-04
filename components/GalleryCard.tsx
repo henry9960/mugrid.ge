@@ -118,7 +118,7 @@ export default function GalleryCard() {
       {/* ── Shutter flash ── */}
       {flashKey > 0 && (
         <div
-          key={flashKey}
+          key={`flash-${flashKey}`}
           className="absolute inset-0 pointer-events-none"
           style={{ backgroundColor: 'white', animation: 'shutter-flash 380ms ease-out forwards' }}
         />
@@ -127,7 +127,7 @@ export default function GalleryCard() {
       {/* ── Focus reticle ── */}
       {focusKey > 0 && (
         <div
-          key={focusKey}
+          key={`reticle-${focusKey}`}
           className="absolute inset-0 pointer-events-none"
           style={{ animation: 'reticle-in 600ms ease-out forwards' }}
         >
