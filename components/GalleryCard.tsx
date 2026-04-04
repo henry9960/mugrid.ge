@@ -15,7 +15,11 @@ import { useState, useCallback } from 'react'
 // Local files also work — place in /public/gallery/ and use '/gallery/photo.jpg'
 //
 const PHOTOS: Array<{ src: string; caption?: string }> = [
-  { src: 'https://lh3.googleusercontent.com/d/1srecWi4bA_rIoL2Evz9oT8qdJ5OVB7w1=w1000' },
+  { src: '/gallery/photo1.jpg' },
+  { src: '/gallery/photo2.JPG' },
+  { src: '/gallery/photo3.JPG' },
+  { src: '/gallery/photo4.JPG' },
+  { src: '/gallery/photo5.JPG' },
 ]
 // ─────────────────────────────────────────────────────────────────────────────
 
