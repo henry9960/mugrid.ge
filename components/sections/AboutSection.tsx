@@ -68,6 +68,22 @@ const TIMELINE: TimelineEntry[] = [
     badgeLabel:  'University',
     detail:      'WIP — add society roles, leadership positions, sports teams, and other campus activities here.',
   },
+  {
+    company:     'Comikey',
+    role:        'Product Manager, Reader Experience',
+    description: 'Spearheaded improvements to the reader experience.',
+    period:      "May '21 – Jun '24",
+    state:       'inactive',
+  },
+  {
+    company:     'CatManga',
+    role:        'Founder & Product Manager',
+    description: 'Founded a non-profit localisation group.',
+    period:      "Jun '19 – Nov '21",
+    state:       'highlighted',
+    badgeLabel:  'Key exp.',
+    detail:      'Grew the team to over 50 members, and launched a fan publishing platform which localised over 60 Japanese comics, generating over 35 million monthly page views.',
+  },
 ]
 
 const MS_NODE_COLORS = ['#F25022', '#7FBA00', '#00A4EF', '#FFB900']
