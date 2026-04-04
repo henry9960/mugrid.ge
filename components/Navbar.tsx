@@ -1,38 +1,59 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 const NAV_ITEMS = [
-  { id: 'home', label: 'Home' },
-  { id: 'about', label: 'About' },
-  { id: 'blog', label: 'Blog' },
+  { id: 'home',    label: 'Home' },
+  { id: 'about',   label: 'About' },
+  { id: 'blog',    label: 'Blog' },
   { id: 'contact', label: 'Contact' },
 ]
 
 export default function Navbar() {
+  const pathname  = usePathname()
+  const router    = useRouter()
+  const isHome    = pathname === '/'
+
   const [active,  setActive]  = useState('home')
   const [hovered, setHovered] = useState<string | null>(null)
 
   const displayed = hovered ?? active
 
+  // Scroll-spy — only on home page
   useEffect(() => {
+    if (!isHome) {
+      if (pathname.startsWith('/blog')) setActive('blog')
+      else setActive('home')
+      return
+    }
+
     const handleScroll = () => {
-      const scrollY = window.scrollY + 140
+      const scrollY = window.scrollY
+      const atBottom = scrollY + window.innerHeight >= document.documentElement.scrollHeight - 10
+      const threshold = atBottom
+        ? scrollY + window.innerHeight
+        : scrollY + window.innerHeight * 0.35
+
       for (const { id } of [...NAV_ITEMS].reverse()) {
         const el = document.getElementById(id)
-        if (el && el.offsetTop <= scrollY) {
-          setActive(id)
-          break
+        if (el) {
+          const elTop = el.getBoundingClientRect().top + scrollY
+          if (elTop <= threshold) { setActive(id); break }
         }
       }
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [isHome, pathname])
 
-  const scrollTo = (id: string) => {
+  const handleClick = (id: string) => {
+    if (!isHome) {
+      router.push(`/#${id}`)
+      return
+    }
     const el = document.getElementById(id)
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - 80
@@ -56,7 +77,7 @@ export default function Navbar() {
         {NAV_ITEMS.map(({ id, label }) => (
           <motion.button
             key={id}
-            onClick={() => scrollTo(id)}
+            onClick={() => handleClick(id)}
             onMouseEnter={() => setHovered(id)}
             onMouseLeave={() => setHovered(null)}
             whileTap={{ scale: 0.88 }}

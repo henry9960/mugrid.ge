@@ -38,11 +38,14 @@ export async function GET(req: NextRequest) {
     const { data, content } = matter(raw)
     return NextResponse.json({
       slug,
-      title: data.title ?? '',
-      date: toISODate(data.date),
-      tags: (data.tags as string[]) ?? [],
-      description: (data.description as string) ?? '',
-      body: content.trimStart(),
+      title:        data.title        ?? '',
+      date:         toISODate(data.date),
+      tags:         (data.tags        as string[]) ?? [],
+      description:  (data.description as string)  ?? '',
+      company:      (data.company      as string) ?? '',
+      companyColor: (data.companyColor as string) ?? '',
+      readTime:     (data.readTime     as string) ?? '',
+      body:         content.trimStart(),
     })
   }
 
@@ -56,7 +59,7 @@ export async function GET(req: NextRequest) {
 /** POST /api/admin/posts → create new post */
 export async function POST(request: NextRequest) {
   try {
-    const { slug, title, date, tags, description, body } = await request.json()
+    const { slug, title, date, tags, description, company, companyColor, readTime, body } = await request.json()
     if (!slug || !title) {
       return NextResponse.json({ error: 'slug and title are required' }, { status: 400 })
     }
@@ -66,12 +69,16 @@ export async function POST(request: NextRequest) {
     if (localExists) {
       return NextResponse.json({ error: 'A post with this slug already exists' }, { status: 400 })
     }
-    const fileContent = matter.stringify(body ?? '', {
+    const frontmatter: Record<string, unknown> = {
       title,
       date: date ?? new Date().toISOString().slice(0, 10),
       tags: tags ?? [],
       description: description ?? '',
-    })
+    }
+    if (company)      frontmatter.company      = company
+    if (companyColor) frontmatter.companyColor = companyColor
+    if (readTime)     frontmatter.readTime     = readTime
+    const fileContent = matter.stringify(body ?? '', frontmatter)
     await githubWriteFile(`content/posts/${slug}.md`, fileContent, `Add post: ${title}`)
     return NextResponse.json({ success: true, slug })
   } catch {
@@ -82,7 +89,7 @@ export async function POST(request: NextRequest) {
 /** PUT /api/admin/posts → update post (slug passed in body) */
 export async function PUT(request: NextRequest) {
   try {
-    const { slug, title, date, tags, description, body, newSlug } = await request.json()
+    const { slug, title, date, tags, description, company, companyColor, readTime, body, newSlug } = await request.json()
     const targetSlug = newSlug && newSlug !== slug ? newSlug : slug
 
     const oldPath = path.join(POSTS_DIR, `${slug}.md`)
@@ -92,13 +99,16 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'A post with that slug already exists' }, { status: 400 })
     }
 
-
-    const fileContent = matter.stringify(body ?? '', {
+    const frontmatter: Record<string, unknown> = {
       title,
       date,
       tags: tags ?? [],
       description: description ?? '',
-    })
+    }
+    if (company)      frontmatter.company      = company
+    if (companyColor) frontmatter.companyColor = companyColor
+    if (readTime)     frontmatter.readTime     = readTime
+    const fileContent = matter.stringify(body ?? '', frontmatter)
 
     await githubWriteFile(`content/posts/${targetSlug}.md`, fileContent, `Update post: ${title}`)
 

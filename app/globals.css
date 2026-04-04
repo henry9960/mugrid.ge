@@ -15,6 +15,12 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (min-width: 1024px) {
+  html {
+    zoom: 1.1;
+  }
+}
+
 body {
   background-color: var(--canvas);
   color: var(--text-primary);
@@ -44,6 +50,23 @@ body {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+@keyframes blob-clash-1 {
+  0%, 100% { transform: translate(0%, 0%) scale(1); }
+  50%       { transform: translate(32%, 32%) scale(0.8); }
+}
+
+@keyframes blob-clash-2 {
+  0%, 100% { transform: translate(0%, 0%) scale(1); }
+  50%       { transform: translate(-32%, -32%) scale(0.8); }
+}
+
+@keyframes blob-scatter {
+  0%, 47%  { opacity: 0;   transform: translate(-50%, -50%) scale(0); }
+  50%      { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
+  82%      { opacity: 0;   transform: translate(calc(-50% + var(--fx)), calc(-50% + var(--fy))) scale(0.6); }
+  100%     { opacity: 0;   transform: translate(calc(-50% + var(--fx)), calc(-50% + var(--fy))) scale(0.6); }
 }
 
 @keyframes ripple-out {

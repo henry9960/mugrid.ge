@@ -13,7 +13,7 @@ export default function BlogPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-[1200px] mx-auto px-8 py-12">
 
         {/* Back */}
         <Link
@@ -27,15 +27,14 @@ export default function BlogPage() {
         </Link>
 
         {/* Header */}
-        <div className="mb-10">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#ABABAB] mb-3">Writing</p>
-          <h1 className="text-4xl font-semibold text-[#0A0A0A] tracking-tight mb-2">Blog</h1>
-          <p className="text-lg text-[#6B6B6B] font-light">
+        <div className="mb-4">
+          <h1 className="text-3xl font-semibold text-[#0A0A0A] tracking-tight mb-1">Blog</h1>
+          <p className="text-base text-[#6B6B6B] font-light">
             Thoughts on product, AI, and building things.
           </p>
         </div>
 
-        <hr className="border-t border-[#E4E4E8] mb-10" />
+        <hr className="border-t border-[#E4E4E8] mb-4" />
 
         <BlogList posts={posts} tags={tags} />
 

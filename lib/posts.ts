@@ -6,12 +6,14 @@ import { marked } from 'marked'
 const POSTS_DIR = path.join(process.cwd(), 'content/posts')
 
 export interface PostMeta {
-  slug:        string
-  title:       string
-  date:        string   // ISO string e.g. "2026-04-01"
-  tags:        string[]
-  description: string
-  readTime:    string
+  slug:         string
+  title:        string
+  date:         string   // ISO string e.g. "2026-04-01"
+  tags:         string[]
+  description:  string
+  readTime:     string
+  company?:     string   // e.g. "Microsoft" — links post to a company experience
+  companyColor?: string  // hex accent colour, e.g. "#0078D4" — overrides built-in brand config
 }
 
 export interface Post extends PostMeta {
@@ -47,11 +49,13 @@ export function getAllPosts(): PostMeta[] {
       const { data, content } = matter(raw)
       return {
         slug,
-        title:       data.title       as string,
-        date:        toISODate(data.date),
-        tags:        (data.tags       as string[]) ?? [],
-        description: data.description as string ?? '',
-        readTime:    estimateReadTime(content),
+        title:        data.title        as string,
+        date:         toISODate(data.date),
+        tags:         (data.tags        as string[]) ?? [],
+        description:  data.description  as string ?? '',
+        readTime:     (data.readTime as string | undefined) ?? estimateReadTime(content),
+        company:      data.company      as string | undefined,
+        companyColor: data.companyColor as string | undefined,
       }
     })
     .sort((a, b) => b.date.localeCompare(a.date))
@@ -69,7 +73,9 @@ export function getPostBySlug(slug: string): Post {
     date:        toISODate(data.date),
     tags:        (data.tags       as string[]) ?? [],
     description: data.description as string ?? '',
-    readTime:    estimateReadTime(content),
+    readTime:    (data.readTime as string | undefined) ?? estimateReadTime(content),
+    company:      data.company      as string | undefined,
+    companyColor: data.companyColor as string | undefined,
     html,
   }
 }

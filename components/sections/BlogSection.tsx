@@ -1,5 +1,31 @@
 import Link from 'next/link'
 import { getAllPosts, formatPostDate } from '@/lib/posts'
+import BlogCard from '@/components/BlogCard'
+
+/* ── Company brand config (mirrors BlogList.tsx) ── */
+const COMPANY: Record<string, { color: string; bg: string; border: string }> = {
+  Microsoft: { color: '#0078D4', bg: 'rgba(0,120,212,0.06)',  border: 'rgba(0,120,212,0.2)' },
+  Amazon:    { color: '#E07B00', bg: 'rgba(224,123,0,0.06)',  border: 'rgba(224,123,0,0.2)' },
+  Spotify:   { color: '#1DB954', bg: 'rgba(29,185,84,0.06)',  border: 'rgba(29,185,84,0.2)' },
+}
+
+function hexToRgba(hex: string, alpha: number) {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r},${g},${b},${alpha})`
+}
+
+function getCompanyCfg(company?: string, companyColor?: string) {
+  if (!company) return null
+  if (COMPANY[company]) return COMPANY[company]
+  if (companyColor) return {
+    color:  companyColor,
+    bg:     hexToRgba(companyColor, 0.06),
+    border: hexToRgba(companyColor, 0.2),
+  }
+  return null
+}
 
 export default function BlogSection() {
   const recent = getAllPosts().slice(0, 3)
@@ -8,33 +34,21 @@ export default function BlogSection() {
     <div className="relative">
       {/* ── Recent posts grid ── */}
       <div className="grid grid-cols-12 gap-4 mb-4">
-        {recent.map(post => (
-          <Link
-            key={post.slug}
-            href={`/blog/${post.slug}`}
-            className="col-span-12 md:col-span-4 bg-[#F7F7F9] rounded-3xl p-6 no-underline block group transition-all duration-200 border border-transparent hover:border-[#E4E4E8]"
-          >
-            <p className="text-xs text-[#ABABAB] mb-2">
-              {formatPostDate(post.date)} · {post.readTime}
-            </p>
-            <h3 className="text-lg font-semibold text-[#0A0A0A] leading-snug mb-4 group-hover:text-[#3A3A3A] transition-colors duration-150">
-              {post.title}
-            </h3>
-            <hr className="border-t border-[#E4E4E8] mb-4" />
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2 flex-wrap">
-                {post.tags.map(tag => (
-                  <span key={tag} className="text-xs text-[#6B6B6B] bg-[#EDEDED] rounded-full px-2.5 py-1">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ABABAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
-                <path d="M7 17L17 7M17 7H7M17 7v10" />
-              </svg>
-            </div>
-          </Link>
-        ))}
+        {recent.map(post => {
+          const co = getCompanyCfg(post.company, post.companyColor)
+          return (
+            <BlogCard
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              date={formatPostDate(post.date)}
+              readTime={post.readTime}
+              title={post.title}
+              description={post.description}
+              tags={post.tags}
+              co={co}
+            />
+          )
+        })}
 
         {/* Placeholder cards if fewer than 3 posts */}
         {Array.from({ length: Math.max(0, 3 - recent.length) }).map((_, i) => (

@@ -23,6 +23,9 @@ interface PostForm {
   date: string
   tags: string[]
   description: string
+  readTime: string
+  company: string
+  companyColor: string
   body: string
 }
 
@@ -63,8 +66,9 @@ export default function EditPostClient() {
     fetch(`/api/admin/posts?slug=${slug}`)
       .then(r => r.json())
       .then((d: PostForm) => {
-        savedData.current = d
-        setFormData(structuredClone(d))
+        const filled = { company: '', companyColor: '', readTime: '', ...d }
+        savedData.current = filled
+        setFormData(structuredClone(filled))
       })
   }, [slug])
 
@@ -97,6 +101,9 @@ export default function EditPostClient() {
           ...formData,
           slug,
           newSlug: formData.slug !== slug ? formData.slug : undefined,
+          company: formData.company || undefined,
+          companyColor: formData.companyColor || undefined,
+          readTime: formData.readTime || undefined,
         }),
       })
       const data = await res.json()
@@ -236,6 +243,18 @@ export default function EditPostClient() {
               />
             </Field>
           </div>
+          <Field label="Reading time (optional — leave blank to auto-calculate)">
+            <input
+              type="text"
+              value={formData.readTime}
+              onChange={e => set('readTime', e.target.value)}
+              placeholder="e.g. 5 min read"
+              className={inputCls}
+              style={inputStyle}
+              onFocus={e => (e.currentTarget.style.borderColor = '#0A0A0A')}
+              onBlur={e => (e.currentTarget.style.borderColor = '#E4E4E8')}
+            />
+          </Field>
           <Field label="Tags">
             <TagInput tags={formData.tags} onChange={v => set('tags', v)} placeholder="Add tag and press Enter…" />
           </Field>
@@ -251,6 +270,44 @@ export default function EditPostClient() {
               onBlur={e => (e.currentTarget.style.borderColor = '#E4E4E8')}
             />
           </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Company (optional)">
+              <input
+                type="text"
+                value={formData.company}
+                onChange={e => set('company', e.target.value)}
+                placeholder="e.g. Microsoft"
+                className={inputCls}
+                style={inputStyle}
+                onFocus={e => (e.currentTarget.style.borderColor = '#0A0A0A')}
+                onBlur={e => (e.currentTarget.style.borderColor = '#E4E4E8')}
+              />
+            </Field>
+            <Field label="Company colour">
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={formData.companyColor || '#0078D4'}
+                  onChange={e => set('companyColor', e.target.value)}
+                  className="h-[38px] w-10 rounded-lg cursor-pointer border"
+                  style={{ border: '1px solid #E4E4E8', padding: '2px' }}
+                />
+                <input
+                  type="text"
+                  value={formData.companyColor}
+                  onChange={e => set('companyColor', e.target.value)}
+                  placeholder="#0078D4"
+                  className={inputCls}
+                  style={{ ...inputStyle, fontFamily: 'monospace' }}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#0A0A0A')}
+                  onBlur={e => (e.currentTarget.style.borderColor = '#E4E4E8')}
+                />
+              </div>
+              <p className="text-[10px] mt-1" style={{ color: '#ABABAB' }}>
+                Leave blank to use built-in brand colour (e.g. Microsoft blue)
+              </p>
+            </Field>
+          </div>
         </div>
 
         {/* Body */}

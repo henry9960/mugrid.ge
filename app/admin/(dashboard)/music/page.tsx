@@ -90,7 +90,7 @@ export default function AdminMusicPage() {
   if (!data) return <div className="p-8"><p className="text-sm" style={{ color: '#ABABAB' }}>Loading…</p></div>
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-8 max-w-3xl">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-xl font-semibold" style={{ color: '#0A0A0A' }}>Music</h1>
