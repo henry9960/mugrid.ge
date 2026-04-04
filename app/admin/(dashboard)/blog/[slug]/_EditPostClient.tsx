@@ -60,7 +60,7 @@ export default function EditPostClient() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch(`/api/admin/posts/${slug}`)
+    fetch(`/api/admin/posts?slug=${slug}`)
       .then(r => r.json())
       .then((d: PostForm) => {
         savedData.current = d
@@ -90,11 +90,12 @@ export default function EditPostClient() {
     setStatus('saving')
     setError('')
     try {
-      const res = await fetch(`/api/admin/posts/${slug}`, {
+      const res = await fetch(`/api/admin/posts`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
+          slug,
           newSlug: formData.slug !== slug ? formData.slug : undefined,
         }),
       })
@@ -119,7 +120,7 @@ export default function EditPostClient() {
   }
 
   const handleDelete = async () => {
-    await fetch(`/api/admin/posts/${slug}`, { method: 'DELETE' })
+    await fetch(`/api/admin/posts?slug=${slug}`, { method: 'DELETE' })
     router.push('/admin/blog')
     router.refresh()
   }
