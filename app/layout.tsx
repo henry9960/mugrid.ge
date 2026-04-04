@@ -9,8 +9,20 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Henry — Portfolio',
-  description: 'Product Designer & Builder',
+  title: 'Harry Mugridge',
+  description: 'Product Manager & Student at Royal Holloway. Previously at Microsoft, Amazon and Spotify.',
+  openGraph: {
+    title: 'Harry Mugridge',
+    description: 'Product Manager & Student at Royal Holloway. Previously at Microsoft, Amazon and Spotify.',
+    url: 'https://harry.mugrid.ge',
+    siteName: 'Harry Mugridge',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Harry Mugridge',
+    description: 'Product Manager & Student at Royal Holloway. Previously at Microsoft, Amazon and Spotify.',
+  },
 }
 
 export default function RootLayout({
