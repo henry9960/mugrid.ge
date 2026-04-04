@@ -7,7 +7,6 @@ tags:
   - Vibe Coding
   - AI
 description: 'Project description goes here, short, catchy'
-readTime: 100 min read
 ---
 Just drafting this outline for myself on here for now since I haven't implemented a draft feature into my blog yet!
 
