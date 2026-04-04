@@ -1,5 +1,4 @@
 import Navbar from '@/components/Navbar'
-import CatWalk from '@/components/CatWalk'
 import HomeSection from '@/components/sections/HomeSection'
 import AboutSection from '@/components/sections/AboutSection'
 import BlogSection from '@/components/sections/BlogSection'
@@ -9,7 +8,6 @@ export default function Page() {
   return (
     <main className="min-h-screen bg-white">
       <Navbar />
-      <CatWalk />
       <div className="max-w-[1200px] mx-auto px-8">
         <section id="home" className="pt-24 pb-4">
           <HomeSection />
