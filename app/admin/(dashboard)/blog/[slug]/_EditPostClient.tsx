@@ -66,7 +66,7 @@ export default function EditPostClient() {
     fetch(`/api/admin/posts?slug=${slug}`)
       .then(r => r.json())
       .then((d: PostForm) => {
-        const filled = { company: '', companyColor: '', readTime: '', ...d }
+        const filled = { ...d, company: d.company || '', companyColor: d.companyColor || '', readTime: d.readTime || '' }
         savedData.current = filled
         setFormData(structuredClone(filled))
       })
