@@ -26,7 +26,7 @@ function PlatformCard({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`bg-[#F7F7F9] rounded-3xl p-6 flex flex-col justify-between no-underline aspect-square ${className}`}
+      className={`bg-[#F7F7F9] rounded-3xl p-4 md:p-6 flex flex-col justify-between no-underline aspect-square ${className}`}
       style={{
         transition: 'background 0.18s ease-out',
         ...(hovered ? hoverStyle : {}),
@@ -35,7 +35,7 @@ function PlatformCard({
       onMouseLeave={() => setHovered(false)}
     >
       <h2
-        className="text-2xl font-semibold"
+        className="text-lg md:text-2xl font-semibold"
         style={{ color: hovered ? '#ffffff' : '#0A0A0A', transition: 'color 0.18s ease-out' }}
       >
         {platform}
@@ -50,13 +50,13 @@ function PlatformCard({
         />
         <div className="flex items-center justify-between">
           <p
-            className="text-sm"
+            className="text-xs md:text-sm truncate mr-2"
             style={{ color: hovered ? 'rgba(255,255,255,0.75)' : '#6B6B6B', transition: 'color 0.18s ease-out' }}
           >
             {handle}
           </p>
           <span
-            className="text-xs"
+            className="text-xs flex-shrink-0"
             style={{ color: hovered ? 'rgba(255,255,255,0.5)' : '#ABABAB', transition: 'color 0.18s ease-out' }}
           >
             →
@@ -82,41 +82,41 @@ function EmailCard({ className = '' }: { className?: string }) {
 
   return (
     <div
-      className={`rounded-3xl p-6 flex flex-col justify-between aspect-square ${className}`}
+      className={`rounded-3xl p-4 md:p-6 flex flex-col justify-between aspect-square ${className}`}
       style={{ backgroundColor: '#0A0A0A' }}
     >
       {/* Top */}
       <div>
-        <h2 className="text-2xl font-semibold text-white">Email</h2>
+        <h2 className="text-lg md:text-2xl font-semibold text-white">Email</h2>
         <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
           {email}
         </p>
       </div>
 
       {/* Bottom CTAs */}
-      <div className="space-y-2">
+      <div className="flex md:flex-col gap-2">
         <a
           href={`mailto:${email}`}
-          className="flex items-center justify-between w-full rounded-2xl px-4 py-3 no-underline group"
+          className="flex-1 flex items-center justify-center md:justify-between rounded-2xl px-3 py-2 md:px-4 md:py-3 no-underline group"
           style={{ backgroundColor: 'rgba(255,255,255,0.08)', transition: 'background 0.15s ease-out' }}
           onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.14)')}
           onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)')}
         >
-          <span className="text-sm font-medium text-white">Open mail app</span>
-          <span className="text-white opacity-50">↗</span>
+          <span className="hidden md:inline text-sm font-medium text-white">Open mail app</span>
+          <span className="text-white opacity-70 text-base">↗</span>
         </a>
 
         <button
           onClick={handleCopy}
-          className="flex items-center justify-between w-full rounded-2xl px-4 py-3"
+          className="flex-1 flex items-center justify-center md:justify-between rounded-2xl px-3 py-2 md:px-4 md:py-3"
           style={{ backgroundColor: 'rgba(255,255,255,0.08)', transition: 'background 0.15s ease-out' }}
           onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.14)')}
           onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)')}
         >
-          <span className="text-sm font-medium text-white">
+          <span className="hidden md:inline text-sm font-medium text-white">
             {copied ? 'Copied!' : 'Copy address'}
           </span>
-          <span className="text-white opacity-50 text-xs">{copied ? '✓' : '⎘'}</span>
+          <span className="text-white opacity-70 text-base">{copied ? '✓' : '⎘'}</span>
         </button>
       </div>
     </div>
@@ -127,11 +127,11 @@ function EmailCard({ className = '' }: { className?: string }) {
 function GitHubCard({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`bg-[#F7F7F9] rounded-3xl p-6 flex flex-col justify-between aspect-square ${className}`}
+      className={`bg-[#F7F7F9] rounded-3xl p-4 md:p-6 flex flex-col justify-between aspect-square ${className}`}
       style={{ opacity: 0.4, pointerEvents: 'none', userSelect: 'none' }}
     >
       <div className="flex items-start justify-between">
-        <h2 className="text-2xl font-semibold text-[#0A0A0A]">GitHub</h2>
+        <h2 className="text-lg md:text-2xl font-semibold text-[#0A0A0A]">GitHub</h2>
         <span className="text-[10px] font-semibold text-[#8A8A8A] bg-[#EDEDED] rounded-full px-2.5 py-1">
           Soon
         </span>
@@ -152,14 +152,14 @@ export default function ContactSection() {
   return (
     <div className="grid grid-cols-12 gap-4">
       <PlatformCard
-        className="col-span-12 md:col-span-3"
+        className="col-span-6 md:col-span-3"
         platform="LinkedIn"
         handle="/in/harrymugridge"
         href="https://linkedin.com/in/harrymugridge"
         hoverBg="#0A66C2"
       />
       <PlatformCard
-        className="col-span-12 md:col-span-3"
+        className="col-span-6 md:col-span-3"
         platform="Instagram"
         handle="@hyhb"
         href="https://instagram.com/hyhb"
@@ -168,8 +168,8 @@ export default function ContactSection() {
             'linear-gradient(135deg, #833AB4 0%, #C13584 35%, #E1306C 55%, #FD1D1D 78%, #FCB045 100%)',
         }}
       />
-      <EmailCard className="col-span-12 md:col-span-3" />
-      <GitHubCard className="col-span-12 md:col-span-3" />
+      <EmailCard className="col-span-6 md:col-span-3" />
+      <GitHubCard className="col-span-6 md:col-span-3" />
     </div>
   )
 }
