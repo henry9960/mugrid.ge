@@ -31,7 +31,7 @@ export default function HomeSection() {
           <Divider />
 
           <p className="text-[15px] text-[#6B6B6B] leading-relaxed">
-            Hey, I&apos;m Harry, I&apos;m a Product Manager who&apos;s background spans product and strategy roles across Microsoft, Amazon and Spotify where I&apos;ve worked on the customer experience, growth and operations.
+            Hey, I&apos;m Harry, I&apos;m a Product Manager who&apos;s background spans product and strategy roles across Microsoft, Amazon and Spotify where I&apos;ve worked on customer experience, product, growth and operations.
           </p>
           <p className="text-[15px] text-[#6B6B6B] leading-relaxed mt-4">
             In addition to that, I am also currently a student at Royal Holloway, University of London studying Business and Management.
