@@ -78,40 +78,117 @@ function PlatformCard({
   )
 }
 
+/* ── Particle helpers ── */
+const SCATTER_COLORS: [string, number][] = [
+  ['rgba(249,168,212,', 0.88],
+  ['rgba(4,120,87,',    0.92],
+  ['rgba(20,184,166,',  0.82],
+  ['rgba(251,191,36,',  0.80],
+]
+type Particle = {
+  left: number; top: number; sizePx: number; colorBase: string; opacity: number;
+  animDelay: number; animDur: number; driftSpeed: number;
+  driftPhaseX: number; driftPhaseY: number; driftRadius: number;
+}
+function generateParticles(): Particle[] {
+  return Array.from({ length: 22 }, (_, i) => {
+    const [colorBase, op] = SCATTER_COLORS[i % SCATTER_COLORS.length]
+    return {
+      left:        8 + Math.random() * 84,
+      top:         8 + Math.random() * 84,
+      sizePx:      14 + Math.random() * 26,
+      colorBase,
+      opacity:     +(op - 0.08 + Math.random() * 0.16).toFixed(2),
+      animDelay:   +(Math.random() * 4).toFixed(2),
+      animDur:     +(3 + Math.random() * 3).toFixed(1),
+      driftSpeed:  0.25 + Math.random() * 0.5,
+      driftPhaseX: Math.random() * Math.PI * 2,
+      driftPhaseY: Math.random() * Math.PI * 2,
+      driftRadius: 10 + Math.random() * 18,
+    }
+  })
+}
+
 /* ── Email card (square, coloured) ───────────────────────── */
 function EmailCard({ email, className = '' }: { email: string; className?: string }) {
   const [copied, setCopied] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
   const blob1WrapRef = useRef<HTMLDivElement>(null)
   const blob2WrapRef = useRef<HTMLDivElement>(null)
-  const mouse = useRef({ x: 0, y: 0, inside: false })
+  const blob3WrapRef = useRef<HTMLDivElement>(null)
+  const blob4WrapRef = useRef<HTMLDivElement>(null)
+  const particlesRef     = useRef<Particle[]>([])
+  const particleDomRefs  = useRef<(HTMLDivElement | null)[]>([])
+  const particleOffsets  = useRef<{ ox: number; oy: number }[]>([])
+  const mouse = useRef({ x: 0, y: 0 })
   const b1 = useRef({ x: 0, y: 0 })
   const b2 = useRef({ x: 0, y: 0 })
+  const b3 = useRef({ x: 0, y: 0 })
+  const b4 = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     let raf: number
     const tick = () => {
-      const { x: mx, y: my, inside } = mouse.current
-      const pull = inside ? 1 : 0
-      // blob1 lags a little, blob2 is snappier — feels like two different masses
-      b1.current.x += (mx * 0.42 * pull - b1.current.x) * 0.05
-      b1.current.y += (my * 0.42 * pull - b1.current.y) * 0.05
-      b2.current.x += (mx * 0.68 * pull - b2.current.x) * 0.09
-      b2.current.y += (my * 0.68 * pull - b2.current.y) * 0.09
+      const { x: mx, y: my } = mouse.current
+      // 4 blobs at different speeds & offsets — all chase last known cursor position
+      b1.current.x += (mx * 0.50 - b1.current.x) * 0.04
+      b1.current.y += (my * 0.50 - b1.current.y) * 0.04
+      b2.current.x += (mx * 0.78 - b2.current.x) * 0.08
+      b2.current.y += (my * 0.78 - b2.current.y) * 0.08
+      b3.current.x += (mx * 1.05 - b3.current.x) * 0.13
+      b3.current.y += (my * 1.05 - b3.current.y) * 0.13
+      b4.current.x += (mx * 1.25 - b4.current.x) * 0.20
+      b4.current.y += (my * 1.25 - b4.current.y) * 0.20
       if (blob1WrapRef.current)
         blob1WrapRef.current.style.transform = `translate(${b1.current.x}px,${b1.current.y}px)`
       if (blob2WrapRef.current)
         blob2WrapRef.current.style.transform = `translate(${b2.current.x}px,${b2.current.y}px)`
+      if (blob3WrapRef.current)
+        blob3WrapRef.current.style.transform = `translate(${b3.current.x}px,${b3.current.y}px)`
+      if (blob4WrapRef.current)
+        blob4WrapRef.current.style.transform = `translate(${b4.current.x}px,${b4.current.y}px)`
+      // Particle cursor repulsion
+      const cardW = cardRef.current?.offsetWidth ?? 200
+      const cardH = cardRef.current?.offsetHeight ?? 200
+      particleOffsets.current.forEach((offs, i) => {
+        const el = particleDomRefs.current[i]
+        if (!el) return
+        const p = particlesRef.current[i]
+        if (!p) return
+        const px = (p.left / 100) * cardW - cardW / 2
+        const py = (p.top / 100) * cardH - cardH / 2
+        const dx = mx - px
+        const dy = my - py
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        let targetOx = 0, targetOy = 0
+        const REPEL_R = 75, MAX_PUSH = 28
+        if (dist < REPEL_R && dist > 0.5) {
+          const force = (1 - dist / REPEL_R) * MAX_PUSH
+          targetOx = -(dx / dist) * force
+          targetOy = -(dy / dist) * force
+        }
+        offs.ox += (targetOx - offs.ox) * 0.14
+        offs.oy += (targetOy - offs.oy) * 0.14
+        const t = Date.now() / 1000
+        const driftX = Math.sin(t * p.driftSpeed + p.driftPhaseX) * p.driftRadius
+        const driftY = Math.cos(t * p.driftSpeed * 0.7 + p.driftPhaseY) * p.driftRadius
+        el.style.transform = `translate(${(offs.ox + driftX).toFixed(1)}px,${(offs.oy + driftY).toFixed(1)}px)`
+      })
       raf = requestAnimationFrame(tick)
     }
+    // Generate particles client-only to avoid SSR hydration mismatch
+    particlesRef.current = generateParticles()
+    particleOffsets.current = particlesRef.current.map(() => ({ ox: 0, oy: 0 }))
+    setMounted(true)
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [])
 
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect()
-    mouse.current = { x: e.clientX - r.left - r.width / 2, y: e.clientY - r.top - r.height / 2, inside: true }
+    mouse.current = { x: e.clientX - r.left - r.width / 2, y: e.clientY - r.top - r.height / 2 }
   }
-  const onMouseLeave = () => { mouse.current.inside = false }
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -123,58 +200,67 @@ function EmailCard({ email, className = '' }: { email: string; className?: strin
 
   return (
     <div
+      ref={cardRef}
       className={`rounded-3xl p-4 md:p-6 flex flex-col justify-between aspect-square relative overflow-hidden ${className}`}
-      style={{ backgroundColor: '#041f12', cursor: 'crosshair' }}
+      style={{ backgroundColor: '#041f12' }}
       onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
     >
-      {/* blob1 wrapper — cursor offset applied here; inner div keeps CSS animation */}
+      {/* blob1 — emerald, heavy/slow */}
       <div ref={blob1WrapRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         <div style={{
-          position: 'absolute', width: '80%', height: '80%',
-          borderRadius: '50%', top: '-20%', left: '-20%',
-          background: 'radial-gradient(circle, rgba(4,120,87,0.85) 0%, transparent 70%)',
-          filter: 'blur(18px)',
-          animation: 'blob-clash-1 8s ease-in-out infinite',
+          position: 'absolute', width: '90%', height: '90%',
+          borderRadius: '50%', top: '-25%', left: '-25%',
+          background: 'radial-gradient(circle, rgba(4,120,87,0.35) 0%, transparent 70%)',
+          filter: 'blur(20px)',
+          animation: 'blob-clash-1 9s ease-in-out infinite',
         }} />
       </div>
-      {/* blob2 wrapper */}
+      {/* blob2 — pink, medium */}
       <div ref={blob2WrapRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         <div style={{
-          position: 'absolute', width: '80%', height: '80%',
-          borderRadius: '50%', bottom: '-20%', right: '-20%',
-          background: 'radial-gradient(circle, rgba(249,168,212,0.8) 0%, transparent 65%)',
+          position: 'absolute', width: '85%', height: '85%',
+          borderRadius: '50%', bottom: '-25%', right: '-25%',
+          background: 'radial-gradient(circle, rgba(249,168,212,0.3) 0%, transparent 65%)',
           filter: 'blur(18px)',
-          animation: 'blob-clash-2 8s ease-in-out infinite',
+          animation: 'blob-clash-2 7s ease-in-out infinite',
         }} />
       </div>
-      {/* scattered blob fragments — extreme burst to card edges */}
-      {([
-        { fx: '130px',  fy: '-120px', color: 'rgba(249,168,212,0.9)',  size: '38%', delay: 0.04 },
-        { fx: '-125px', fy: '-115px', color: 'rgba(4,120,87,0.85)',    size: '34%', delay: 0.09 },
-        { fx: '135px',  fy: '125px',  color: 'rgba(249,168,212,0.85)', size: '30%', delay: 0.02 },
-        { fx: '-130px', fy: '120px',  color: 'rgba(4,150,87,0.8)',     size: '32%', delay: 0.11 },
-        { fx: '0px',    fy: '-140px', color: 'rgba(249,168,212,0.8)',  size: '28%', delay: 0.06 },
-        { fx: '0px',    fy: '138px',  color: 'rgba(4,120,87,0.8)',     size: '26%', delay: 0.07 },
-        { fx: '-142px', fy: '0px',    color: 'rgba(249,168,212,0.75)', size: '24%', delay: 0.05 },
-        { fx: '140px',  fy: '0px',    color: 'rgba(4,120,87,0.75)',    size: '26%', delay: 0.1  },
-        { fx: '90px',   fy: '-130px', color: 'rgba(4,150,87,0.7)',     size: '22%', delay: 0.13 },
-        { fx: '-95px',  fy: '125px',  color: 'rgba(249,168,212,0.7)',  size: '20%', delay: 0.03 },
-        { fx: '-110px', fy: '-80px',  color: 'rgba(249,168,212,0.8)',  size: '28%', delay: 0.08 },
-        { fx: '105px',  fy: '95px',   color: 'rgba(4,120,87,0.85)',    size: '24%', delay: 0.14 },
-        { fx: '-60px',  fy: '-138px', color: 'rgba(4,120,87,0.75)',    size: '20%', delay: 0.06 },
-        { fx: '55px',   fy: '135px',  color: 'rgba(249,168,212,0.75)', size: '22%', delay: 0.12 },
-      ] as { fx: string; fy: string; color: string; size: string; delay: number }[]).map(({ fx, fy, color, size, delay }, i) => (
-        <div key={i} style={{
-          position: 'absolute', left: '50%', top: '50%',
-          width: size, height: size, borderRadius: '50%',
-          background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
-          filter: 'blur(14px)',
-          ['--fx' as string]: fx,
-          ['--fy' as string]: fy,
-          animation: `blob-scatter 8s ease-in-out ${delay}s infinite`,
-          pointerEvents: 'none',
+      {/* blob3 — cyan, fast */}
+      <div ref={blob3WrapRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <div style={{
+          position: 'absolute', width: '70%', height: '70%',
+          borderRadius: '50%', top: '10%', right: '-15%',
+          background: 'radial-gradient(circle, rgba(20,184,166,0.28) 0%, transparent 70%)',
+          filter: 'blur(16px)',
+          animation: 'blob-clash-3 6s ease-in-out 1s infinite',
         }} />
+      </div>
+      {/* blob4 — gold, snappy */}
+      <div ref={blob4WrapRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <div style={{
+          position: 'absolute', width: '60%', height: '60%',
+          borderRadius: '50%', bottom: '5%', left: '-10%',
+          background: 'radial-gradient(circle, rgba(251,191,36,0.28) 0%, transparent 70%)',
+          filter: 'blur(14px)',
+          animation: 'blob-clash-4 5s ease-in-out 0.5s infinite',
+        }} />
+      </div>
+      {/* scattered particles — random positions, cursor-repelled via JS (client-only to avoid hydration mismatch) */}
+      {mounted && particlesRef.current.map((p, i) => (
+        <div
+          key={i}
+          ref={(el: HTMLDivElement | null) => { particleDomRefs.current[i] = el }}
+          style={{ position: 'absolute', left: `${p.left}%`, top: `${p.top}%`, pointerEvents: 'none' }}
+        >
+          <div style={{
+            width: `${p.sizePx}px`,
+            height: `${p.sizePx}px`,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, ${p.colorBase}${p.opacity}) 0%, transparent 70%)`,
+            filter: 'blur(9px)',
+            animation: `particle-pulse ${p.animDur}s ease-in-out ${p.animDelay}s infinite`,
+          }} />
+        </div>
       ))}
 
       <div style={{ position: 'relative' }}>
