@@ -3,6 +3,10 @@ export const dynamic = 'force-static'
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyPassword, getSessionToken, COOKIE_NAME, COOKIE_MAX_AGE } from '@/lib/admin/auth'
 
+export async function GET() {
+  return new Response(null, { status: 204 })
+}
+
 export async function POST(request: NextRequest) {
   const { password } = await request.json()
 
