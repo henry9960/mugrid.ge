@@ -4,11 +4,18 @@ import { useState, useRef, useEffect } from 'react'
 import ExternalLinkButton from '@/components/ExternalLinkButton'
 
 const ABOUT_BLOCKS = [
-  { label: 'Background', text: 'WIP' },
-  { label: 'Past',       text: 'WIP' },
-  { label: 'Present',    text: 'WIP' },
-  { label: 'Future',     text: 'WIP' },
-  { label: 'Hobbies',   text: 'WIP' },
+  {
+    label: 'Background',
+    text:  'Born in the UK, raised across Switzerland and Turkey, shaping a global perspective early on and led to me being trilingual in English, Turkish and German. Currently studying Business and Management at Royal Holloway, with prior internships at Amazon and Spotify.',
+  },
+  {
+    label: "What's next",
+    text:  'Currently interning at Intel and will be joining Microsoft this summer to work within their MSAI team. Looking forward to learning more about Product Management.',
+  },
+  {
+    label: 'Hobbies',
+    text:  'Hiking, climbing, photography, traveling and coffee.',
+  },
 ]
 
 type TimelineState = 'active' | 'highlighted' | 'inactive'
@@ -235,7 +242,7 @@ export default function AboutSection() {
             <p className="text-[10px] font-semibold uppercase tracking-widest text-[#ABABAB] mb-1.5">
               Location
             </p>
-            <p className="text-[15px] text-[#6B6B6B]">London, UK · Open to remote</p>
+            <p className="text-[15px] text-[#6B6B6B]">London, United Kingdom</p>
           </div>
         </div>
       </div>
