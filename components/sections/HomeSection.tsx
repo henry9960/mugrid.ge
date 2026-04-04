@@ -25,7 +25,6 @@ export default function HomeSection() {
                 Product Manager &amp; Student at Royal Holloway
               </p>
             </div>
-            <div className="w-14 h-14 rounded-full bg-[#E4E4E8] flex-shrink-0 mt-1" />
           </div>
 
           <Divider />
