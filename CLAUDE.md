@@ -18,44 +18,132 @@ The site deploys to GitHub Pages (`harry.mugrid.ge`) via `.github/workflows/depl
 
 ## Architecture
 
-Single-page portfolio. `app/page.tsx` is the only route — it is a server component that composes four scroll-target sections inside a 1200px centred container. Section `id` attributes (`home`, `about`, `blog`, `contact`) are what the navbar scrolls to.
+Portfolio site with a main single-page layout plus sub-pages. `app/page.tsx` is the primary route — a server component that composes four scroll-target sections inside a 1200px centred container. Section `id` attributes (`home`, `about`, `blog`, `contact`) are what the navbar scrolls to.
 
 ```
 app/
-  layout.tsx          # DM Sans font (next/font/google), global metadata
-  globals.css         # CSS variables, scrollbar, @keyframes (gradient-drift, ripple-out)
-  page.tsx            # Single route: Navbar + four sections
+  layout.tsx              # DM Sans font, global metadata (OG tags, Twitter card)
+  globals.css             # CSS variables, scrollbar, @keyframes
+  page.tsx                # Main route: Navbar + four sections
+  microsoft/
+    page.tsx              # /microsoft detail page (coming soon)
+  blog/
+    page.tsx              # /blog listing page — server component, passes to BlogList
+    [slug]/
+      page.tsx            # Individual post renderer with prose styles
 
 components/
-  Navbar.tsx          # 'use client' — floating pill, scroll-spy via window scroll listener,
-                      #   Framer Motion layoutId sliding indicator
-  WhatImUpToCard.tsx  # 'use client' — the emerald gradient card with mouse-tracking glow
-                      #   and dual concentric ripple rings (spawned on mousemove, throttled)
+  Navbar.tsx              # 'use client' — floating pill, scroll-spy, Framer Motion
+                          #   layoutId sliding indicator, hover preview + whileTap
+  WhatImUpToCard.tsx      # 'use client' — emerald gradient card, mouse-tracking glow,
+                          #   ripple rings, arrow link to /microsoft
+  MusicCard.tsx           # 'use client' — Spotify-style player, HTML5 Audio API,
+                          #   local files in /public/music/
+  GalleryCard.tsx         # 'use client' — photo carousel, local files in /public/gallery/,
+                          #   camera flash + focus reticle effects, film grain overlay
+  SparklyName.tsx         # 'use client' — gold star sparkle burst on load, then occasional
+  ExternalLinkButton.tsx  # Shared ↗ icon in a circle — internal Link or external <a>
+  BlogList.tsx            # 'use client' — tag filter pills + post grid for /blog page
+  CatWalk.tsx             # 'use client' — orange tabby walks right→left (unused, kept)
   sections/
-    HomeSection.tsx   # Server component — 12-col bento grid; imports WhatImUpToCard
-    AboutSection.tsx  # Server component — 7/5 col split: about blocks + vertical timeline
-    BlogSection.tsx   # Server component — blurred placeholder cards with "Coming Soon" overlay
-    ContactSection.tsx# 'use client' — platform cards (hover → brand colour), email card
-                      #   (copy-to-clipboard + mailto), GitHub "Soon" card
+    HomeSection.tsx       # Server component — 12-col bento grid
+    AboutSection.tsx      # 'use client' — about blocks + 3-state timeline,
+                          #   NeuralNetworkCanvas (canvas animation) on Microsoft card,
+                          #   spinning MS conic-gradient border, expandable highlighted cards
+    BlogSection.tsx       # Server component — 3 most recent posts from content/posts/,
+                          #   "View all" link to /blog
+    ContactSection.tsx    # 'use client' — platform cards (hover → brand colour + 0.18s
+                          #   transition), email card (copy + mailto), GitHub "Soon" card
+
+lib/
+  posts.ts                # Build-time markdown reader: gray-matter + marked,
+                          #   getAllPosts / getPostBySlug / getAllTags / formatPostDate
+
+content/
+  posts/
+    *.md                  # Markdown blog posts with YAML frontmatter
+
+public/
+  gallery/                # Local photos for GalleryCard (photo1.jpg … photo5.JPG)
+  music/                  # Local audio files for MusicCard
 ```
+
+## Blog System
+
+Posts live in `content/posts/` as `.md` files. Frontmatter format:
+
+```md
+---
+title: Post Title
+date: 2026-04-10
+tags: [Product, AI]
+description: One sentence summary shown in cards.
+---
+
+Content in markdown...
+```
+
+- Posts are sorted by date descending.
+- `BlogSection` on the home page shows the 3 most recent.
+- `/blog` shows all posts with client-side tag filtering.
+- `/blog/[slug]` renders the full post with prose styles.
+- Read time is auto-estimated (~200 wpm).
+- `gray-matter` parses YAML dates as `Date` objects — always use `toISODate()` helper in `lib/posts.ts`, not `String().slice()`.
+
+## Timeline (AboutSection)
+
+Three visual states defined in the `TIMELINE` array:
+
+| State | Appearance |
+|---|---|
+| `active` | Spinning conic-gradient MS border, NeuralNetworkCanvas, "Now" badge |
+| `highlighted` | White card with double-ring dot, badge label, expandable detail (grid-template-rows trick) |
+| `inactive` | Muted grey text, hollow dot |
+
+To add a page link to a timeline entry, add `href: '/page-slug'` — an `ExternalLinkButton` renders automatically.
 
 ## Design System
 
-**Colours** — white page (`#FFFFFF`), cards `#F7F7F9`. Tailwind tokens: `bg-card`, `bg-canvas`. Raw hex values are used inline when needed. Accent colours only appear on interactive elements (hover states, the emerald card).
+**Colours** — white page (`#FFFFFF`), cards `#F7F7F9`. Raw hex values inline when needed. Accent colours only on interactive elements.
 
-**Grid** — 12-column (`grid-cols-12`) with `gap-4` (16px). All layout uses column spans; no arbitrary positioning.
+**Grid** — 12-column (`grid-cols-12`) with `gap-4` (16px). All layout uses column spans.
 
 **Spacing** — 8pt scale. Prefer Tailwind's default scale (p-4 = 16px, p-6 = 24px, p-8 = 32px).
 
-**Cards** — `bg-[#F7F7F9] rounded-3xl` (24px radius). Non-interactive cards have no hover state. Interactive cards use inline `onMouseEnter`/`onMouseLeave` with `transition` on the style prop rather than Tailwind hover variants, because several use dynamic inline styles.
+**Cards** — `bg-[#F7F7F9] rounded-3xl` (24px radius). Interactive cards use inline `onMouseEnter`/`onMouseLeave` with `transition` on the style prop.
 
-**Framer Motion** is used in exactly two places: the navbar sliding pill (`layoutId="nav-pill"`) and the email compose form expand/collapse (`AnimatePresence` + `motion.div` height animation). Do not add Framer Motion elsewhere unless there is a strong reason.
+**Framer Motion** — used only in Navbar (sliding pill `layoutId="nav-pill"`, `whileTap` press animation). Do not add elsewhere without strong reason.
 
-**`'use client'` boundary** — only components that need browser APIs (scroll listener, clipboard, mouse events) are client components. Keep server components as the default.
+**ExternalLinkButton** — standardised ↗ icon component. Use for any "opens another page" affordance. Accepts `href`, `external` (boolean), `bg`, `color`, `hoverBg`, `size`.
 
-## Content Placeholders
+**`'use client'` boundary** — only components needing browser APIs are client components. Keep server components as the default.
 
-Several fields are intentionally left as "WIP" and are ready to be filled in:
-- Bio paragraphs in `HomeSection.tsx` (primary card)
-- One-liner description in `WhatImUpToCard.tsx`
-- About blocks (`ABOUT_BLOCKS` array) in `AboutSection.tsx`
+**SVG arrow icon** — `<path d="M7 17L17 7M17 7H7M17 7v10" />` — used consistently across the site for external links and navigation indicators.
+
+## Key Content Locations
+
+| What | Where |
+|---|---|
+| Bio text | `components/sections/HomeSection.tsx` |
+| About blocks | `ABOUT_BLOCKS` array in `AboutSection.tsx` |
+| Timeline entries | `TIMELINE` array in `AboutSection.tsx` |
+| "What I'm up to" card | `components/WhatImUpToCard.tsx` |
+| Music tracks | `MusicCard.tsx` + `/public/music/` |
+| Gallery photos | `GalleryCard.tsx` PHOTOS array + `/public/gallery/` |
+| Blog posts | `content/posts/*.md` |
+| Site metadata / OG | `app/layout.tsx` |
+| Microsoft page | `app/microsoft/page.tsx` |
+
+## Adding Gallery Photos
+
+Drop files into `/public/gallery/` then add entries to the `PHOTOS` array in `GalleryCard.tsx`:
+
+```ts
+{ src: '/gallery/filename.jpg', caption: 'Optional caption' }
+```
+
+The first entry is always shown first.
+
+## Neural Network Canvas Effect
+
+`NeuralNetworkCanvas` in `AboutSection.tsx` — 16 drifting nodes in MS brand colours (`#F25022`, `#7FBA00`, `#00A4EF`, `#FFB900`) connected by lines when within 70px. Speed 0.35, opacity pulses ±0.004/frame. Canvas `400×100`, `pointerEvents: none`, absolutely inset. Documented in `memory/project_neural_network_effect.md`.
