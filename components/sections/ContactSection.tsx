@@ -29,7 +29,7 @@ function PlatformCard({
       rel="noopener noreferrer"
       className={`bg-[#F7F7F9] rounded-3xl p-4 md:p-6 flex flex-col justify-between no-underline aspect-square ${className}`}
       style={{
-        transition: 'background 0.18s ease-out',
+        transition: hovered ? 'background 0.2s ease-out' : 'background 1.4s ease-out',
         ...(hovered ? hoverStyle : {}),
       }}
       onMouseEnter={() => setHovered(true)}
@@ -37,7 +37,7 @@ function PlatformCard({
     >
       <h2
         className="text-lg md:text-2xl font-semibold"
-        style={{ color: hovered ? '#ffffff' : '#0A0A0A', transition: 'color 0.18s ease-out' }}
+        style={{ color: hovered ? '#ffffff' : '#0A0A0A', transition: hovered ? 'color 0.2s ease-out' : 'color 1.4s ease-out' }}
       >
         {platform}
       </h2>
@@ -46,13 +46,13 @@ function PlatformCard({
           className="border-t mb-3"
           style={{
             borderColor: hovered ? 'rgba(255,255,255,0.2)' : '#E4E4E8',
-            transition: 'border-color 0.18s ease-out',
+            transition: hovered ? 'border-color 0.2s ease-out' : 'border-color 1.4s ease-out',
           }}
         />
         <div className="flex items-center justify-between">
           <p
             className="text-xs md:text-sm truncate mr-2"
-            style={{ color: hovered ? 'rgba(255,255,255,0.75)' : '#6B6B6B', transition: 'color 0.18s ease-out' }}
+            style={{ color: hovered ? 'rgba(255,255,255,0.75)' : '#6B6B6B', transition: hovered ? 'color 0.2s ease-out' : 'color 1.4s ease-out' }}
           >
             {handle}
           </p>
@@ -60,7 +60,7 @@ function PlatformCard({
             width="11" height="11" viewBox="0 0 24 24" fill="none"
             stroke={hovered ? 'rgba(255,255,255,0.5)' : '#ABABAB'}
             strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-            style={{ flexShrink: 0, transition: 'stroke 0.18s ease-out' }}
+            style={{ flexShrink: 0, transition: hovered ? 'stroke 0.2s ease-out' : 'stroke 1.4s ease-out' }}
           >
             <path d="M7 17L17 7M17 7H7M17 7v10" />
           </svg>
