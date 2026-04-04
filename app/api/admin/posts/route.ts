@@ -19,10 +19,22 @@ export async function GET(req: NextRequest) {
 
   if (slug) {
     const filePath = path.join(POSTS_DIR, `${slug}.md`)
-    if (!fs.existsSync(filePath)) {
+    if (!fs.existsSync(filePath) && !process.env.GITHUB_TOKEN) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
-    const raw = fs.readFileSync(filePath, 'utf-8')
+    let raw: string
+    if (fs.existsSync(filePath)) {
+      raw = fs.readFileSync(filePath, 'utf-8')
+    } else {
+      // On Vercel: fetch from GitHub directly
+      const { token, owner, repo, branch } = { token: process.env.GITHUB_TOKEN, owner: process.env.GITHUB_OWNER, repo: process.env.GITHUB_REPO, branch: process.env.GITHUB_BRANCH ?? 'main' }
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/content/posts/${slug}.md?ref=${branch}`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' },
+      })
+      if (!res.ok) return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+      const data = await res.json() as { content: string }
+      raw = Buffer.from(data.content, 'base64').toString('utf-8')
+    }
     const { data, content } = matter(raw)
     return NextResponse.json({
       slug,
@@ -49,7 +61,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'slug and title are required' }, { status: 400 })
     }
     const filePath = path.join(POSTS_DIR, `${slug}.md`)
-    if (fs.existsSync(filePath)) {
+    // Check for duplicates: local filesystem (build-time posts) or GitHub (admin-created posts)
+    const localExists = fs.existsSync(filePath)
+    if (localExists) {
       return NextResponse.json({ error: 'A post with this slug already exists' }, { status: 400 })
     }
     const fileContent = matter.stringify(body ?? '', {
@@ -78,6 +92,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'A post with that slug already exists' }, { status: 400 })
     }
 
+
     const fileContent = matter.stringify(body ?? '', {
       title,
       date,
@@ -87,7 +102,7 @@ export async function PUT(request: NextRequest) {
 
     await githubWriteFile(`content/posts/${targetSlug}.md`, fileContent, `Update post: ${title}`)
 
-    if (targetSlug !== slug && fs.existsSync(oldPath)) {
+    if (targetSlug !== slug) {
       await githubDeleteFile(`content/posts/${slug}.md`, `Rename post: ${slug} → ${targetSlug}`)
     }
 
@@ -102,11 +117,10 @@ export async function DELETE(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get('slug')
   if (!slug) return NextResponse.json({ error: 'slug required' }, { status: 400 })
 
-  const filePath = path.join(POSTS_DIR, `${slug}.md`)
-  if (!fs.existsSync(filePath)) {
-    return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+  try {
+    await githubDeleteFile(`content/posts/${slug}.md`, `Delete post: ${slug}`)
+    return NextResponse.json({ success: true })
+  } catch (e) {
+    return NextResponse.json({ error: (e as Error).message }, { status: 500 })
   }
-
-  await githubDeleteFile(`content/posts/${slug}.md`, `Delete post: ${slug}`)
-  return NextResponse.json({ success: true })
 }
