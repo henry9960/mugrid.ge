@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 const ABOUT_BLOCKS = [
   { label: 'Background', text: 'WIP' },
@@ -69,6 +69,96 @@ const TIMELINE: TimelineEntry[] = [
     detail:      'WIP — add society roles, leadership positions, sports teams, and other campus activities here.',
   },
 ]
+
+const MS_NODE_COLORS = ['#F25022', '#7FBA00', '#00A4EF', '#FFB900']
+
+function NeuralNetworkCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const W = canvas.width
+    const H = canvas.height
+
+    const nodes = Array.from({ length: 16 }, () => ({
+      x:          Math.random() * W,
+      y:          Math.random() * H,
+      vx:         (Math.random() - 0.5) * 0.35,
+      vy:         (Math.random() - 0.5) * 0.35,
+      r:          1 + Math.random() * 1.2,
+      opacity:    0.3 + Math.random() * 0.6,
+      opacityDir: Math.random() > 0.5 ? 1 : -1 as 1 | -1,
+      color:      MS_NODE_COLORS[Math.floor(Math.random() * MS_NODE_COLORS.length)],
+    }))
+
+    const CONNECT_DIST = 70
+
+    function draw() {
+      ctx!.clearRect(0, 0, W, H)
+
+      for (const n of nodes) {
+        n.x += n.vx; n.y += n.vy
+        if (n.x < 0 || n.x > W) n.vx *= -1
+        if (n.y < 0 || n.y > H) n.vy *= -1
+        n.opacity += n.opacityDir * 0.004
+        if (n.opacity > 0.9)  { n.opacity = 0.9;  n.opacityDir = -1 }
+        if (n.opacity < 0.15) { n.opacity = 0.15; n.opacityDir =  1 }
+      }
+
+      // lines
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x
+          const dy = nodes[i].y - nodes[j].y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < CONNECT_DIST) {
+            ctx!.strokeStyle = `rgba(120,120,140,${(1 - dist / CONNECT_DIST) * 0.18})`
+            ctx!.lineWidth = 0.6
+            ctx!.beginPath()
+            ctx!.moveTo(nodes[i].x, nodes[i].y)
+            ctx!.lineTo(nodes[j].x, nodes[j].y)
+            ctx!.stroke()
+          }
+        }
+      }
+
+      // nodes
+      for (const n of nodes) {
+        ctx!.beginPath()
+        ctx!.arc(n.x, n.y, n.r, 0, Math.PI * 2)
+        // parse hex colour → rgba with opacity
+        const r = parseInt(n.color.slice(1, 3), 16)
+        const g = parseInt(n.color.slice(3, 5), 16)
+        const b = parseInt(n.color.slice(5, 7), 16)
+        ctx!.fillStyle = `rgba(${r},${g},${b},${n.opacity * 0.65})`
+        ctx!.fill()
+      }
+    }
+
+    let animId: number
+    const loop = () => { draw(); animId = requestAnimationFrame(loop) }
+    loop()
+    return () => cancelAnimationFrame(animId)
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={400}
+      height={100}
+      style={{
+        position: 'absolute', inset: 0,
+        width: '100%', height: '100%',
+        borderRadius: '10.5px',
+        pointerEvents: 'none',
+      }}
+    />
+  )
+}
 
 function Divider() {
   return <hr className="border-t border-[#E4E4E8] my-4" />
@@ -144,6 +234,14 @@ export default function AboutSection() {
                 0%, 100% { transform: translateY(0px); opacity: 0.45; }
                 50%       { transform: translateY(4px); opacity: 1; }
               }
+              @keyframes ms-border-spin {
+                from { transform: rotate(0deg); }
+                to   { transform: rotate(360deg); }
+              }
+              @keyframes ms-shimmer {
+                0%   { background-position: -200% center; }
+                100% { background-position:  200% center; }
+              }
             `}</style>
             <div className="timeline-scroll space-y-0 px-1">
               {TIMELINE.map((item, i) => {
@@ -162,7 +260,7 @@ export default function AboutSection() {
                       {!isLast && (
                         <div
                           className="w-px flex-1 my-1.5"
-                          style={{ backgroundColor: isActive ? '#C8E6C9' : '#E4E4E8' }}
+                          style={{ backgroundColor: '#E4E4E8' }}
                         />
                       )}
                     </div>
@@ -231,43 +329,63 @@ export default function AboutSection() {
                           </div>
                         </div>
 
+                      ) : isActive ? (
+                        /* ACTIVE: spinning MS gradient border card */
+                        <div style={{ position: 'relative', borderRadius: '12px', padding: '1px', overflow: 'hidden' }}>
+                          {/* Spinning conic gradient — creates the animated border */}
+                          <div style={{
+                            position: 'absolute',
+                            width: '300%', height: '300%',
+                            top: '-100%', left: '-100%',
+                            background: 'conic-gradient(from 0deg, #F2502260, #FFB90060, #7FBA0060, #00A4EF60, #F2502260)',
+                            animation: 'ms-border-spin 6s linear infinite',
+                          }} />
+                          {/* Light card interior */}
+                          <div style={{
+                            position: 'relative',
+                            borderRadius: '10.5px',
+                            padding: '10px 12px',
+                            background: '#ffffff',
+                            overflow: 'hidden',
+                          }}>
+                            <NeuralNetworkCanvas />
+                            <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                              <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                                  <p style={{ fontSize: '14px', fontWeight: 600, color: '#0A0A0A', margin: 0 }}>
+                                    {item.company}
+                                  </p>
+                                  <span style={{
+                                    fontSize: '10px', fontWeight: 600, flexShrink: 0,
+                                    color: '#3A7D44', backgroundColor: '#EDFAF1',
+                                    borderRadius: '9999px', padding: '1px 6px',
+                                  }}>
+                                    Now
+                                  </span>
+                                </div>
+                                <p style={{ fontSize: '12px', color: '#6B6B6B', margin: 0 }}>{item.role}</p>
+                                <p style={{ fontSize: '12px', color: '#ABABAB', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.description}</p>
+                              </div>
+                              <span style={{ fontSize: '12px', color: '#ABABAB', whiteSpace: 'nowrap', flexShrink: 0, marginTop: '1px' }}>
+                                {item.period}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
                       ) : (
-                        /* ACTIVE or INACTIVE: plain row */
+                        /* INACTIVE: plain muted row */
                         <div className="flex items-start justify-between">
                           <div className="min-w-0 overflow-hidden">
                             <div className="flex items-center gap-2 mb-0.5">
-                              <p
-                                className="text-sm font-semibold whitespace-pre-line"
-                                style={{ color: isInactive ? '#7A7A7A' : '#0A0A0A' }}
-                              >
+                              <p className="text-sm font-semibold whitespace-pre-line" style={{ color: '#7A7A7A' }}>
                                 {item.company}
                               </p>
-                              {isActive && (
-                                <span
-                                  className="text-[10px] font-semibold rounded-full px-1.5 py-0.5 flex-shrink-0"
-                                  style={{ color: '#3A7D44', backgroundColor: '#EDFAF1' }}
-                                >
-                                  Now
-                                </span>
-                              )}
                             </div>
-                            <p
-                              className="text-xs"
-                              style={{ color: isInactive ? '#9A9A9A' : '#6B6B6B' }}
-                            >
-                              {item.role}
-                            </p>
-                            <p
-                              className="text-xs mt-0.5 truncate"
-                              style={{ color: isInactive ? '#C0C0C6' : '#ABABAB' }}
-                            >
-                              {item.description}
-                            </p>
+                            <p className="text-xs" style={{ color: '#9A9A9A' }}>{item.role}</p>
+                            <p className="text-xs mt-0.5 truncate" style={{ color: '#C0C0C6' }}>{item.description}</p>
                           </div>
-                          <span
-                            className="text-xs whitespace-nowrap ml-3 mt-0.5 flex-shrink-0"
-                            style={{ color: isInactive ? '#C0C0C6' : '#ABABAB' }}
-                          >
+                          <span className="text-xs whitespace-nowrap ml-3 mt-0.5 flex-shrink-0" style={{ color: '#C0C0C6' }}>
                             {item.period}
                           </span>
                         </div>
