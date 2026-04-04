@@ -1,9 +1,24 @@
 {
   "photos": [
-    { "src": "/gallery/photo1.jpg" },
-    { "src": "/gallery/photo2.JPG" },
-    { "src": "/gallery/photo3.JPG" },
-    { "src": "/gallery/photo4.JPG" },
-    { "src": "/gallery/photo5.JPG" }
+    {
+      "src": "/gallery/photo1.jpg",
+      "caption": "Founders"
+    },
+    {
+      "src": "/gallery/photo2.JPG",
+      "caption": "2024"
+    },
+    {
+      "src": "/gallery/photo3.JPG",
+      "caption": "2025"
+    },
+    {
+      "src": "/gallery/photo4.JPG",
+      "caption": "2026"
+    },
+    {
+      "src": "/gallery/photo5.JPG",
+      "caption": "2026"
+    }
   ]
 }
