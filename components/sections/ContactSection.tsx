@@ -33,7 +33,7 @@ function PlatformCard({
   }
   const handleLeave = () => {
     setState('leaving')
-    leaveTimer.current = setTimeout(() => setState('idle'), 2000)
+    leaveTimer.current = setTimeout(() => setState('idle'), 500)
   }
 
   return (
@@ -46,11 +46,11 @@ function PlatformCard({
       onMouseLeave={handleLeave}
     >
       <style>{`
-        @keyframes card-fill   { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes card-linger {
-          0%   { opacity: 1; }
-          18%  { opacity: 1; filter: brightness(1.25) saturate(1.4); }
-          100% { opacity: 0; filter: brightness(1)    saturate(1); }
+        @keyframes card-fill { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes card-pop  {
+          0%   { opacity: 1; transform: scale(1);    filter: brightness(1)   saturate(1); }
+          40%  { opacity: 1; transform: scale(1.07); filter: brightness(1.5) saturate(1.8); }
+          100% { opacity: 0; transform: scale(1.12); filter: brightness(2.5) saturate(2); }
         }
       `}</style>
 
@@ -62,7 +62,7 @@ function PlatformCard({
           animation: state === 'hovered'
             ? 'card-fill 0.18s ease-out forwards'
             : state === 'leaving'
-              ? 'card-linger 2s ease-out forwards'
+              ? 'card-pop 0.45s cubic-bezier(0.2, 0, 0.8, 1) forwards'
               : 'none',
           opacity: state === 'idle' ? 0 : undefined,
         }}
@@ -73,7 +73,7 @@ function PlatformCard({
         className="relative z-10 text-lg md:text-2xl font-semibold"
         style={{
           color: isActive ? '#ffffff' : '#0A0A0A',
-          transition: state === 'hovered' ? 'color 0.18s ease-out' : 'color 2s ease-out',
+          transition: state === 'hovered' ? 'color 0.18s ease-out' : 'color 0.4s ease-out',
         }}
       >
         {platform}
@@ -83,7 +83,7 @@ function PlatformCard({
           className="border-t mb-3"
           style={{
             borderColor: isActive ? 'rgba(255,255,255,0.2)' : '#E4E4E8',
-            transition: state === 'hovered' ? 'border-color 0.18s ease-out' : 'border-color 2s ease-out',
+            transition: state === 'hovered' ? 'border-color 0.18s ease-out' : 'border-color 0.4s ease-out',
           }}
         />
         <div className="flex items-center justify-between">
@@ -91,7 +91,7 @@ function PlatformCard({
             className="text-xs md:text-sm truncate mr-2"
             style={{
               color: isActive ? 'rgba(255,255,255,0.75)' : '#6B6B6B',
-              transition: state === 'hovered' ? 'color 0.18s ease-out' : 'color 2s ease-out',
+              transition: state === 'hovered' ? 'color 0.18s ease-out' : 'color 0.4s ease-out',
             }}
           >
             {handle}
@@ -100,7 +100,7 @@ function PlatformCard({
             width="11" height="11" viewBox="0 0 24 24" fill="none"
             stroke={isActive ? 'rgba(255,255,255,0.5)' : '#ABABAB'}
             strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-            style={{ flexShrink: 0, transition: state === 'hovered' ? 'stroke 0.18s ease-out' : 'stroke 2s ease-out' }}
+            style={{ flexShrink: 0, transition: state === 'hovered' ? 'stroke 0.18s ease-out' : 'stroke 0.4s ease-out' }}
           >
             <path d="M7 17L17 7M17 7H7M17 7v10" />
           </svg>
