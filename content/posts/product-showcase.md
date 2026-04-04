@@ -2,8 +2,7 @@
 title: How I Designed ??? to ???
 date: '2026-04-04'
 tags:
-  - Product Management
-  - Case Study
+  - Product
   - Project
   - Vibe Coding
   - AI
