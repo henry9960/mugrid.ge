@@ -25,6 +25,7 @@ export interface TimelineEntry {
   badgeLabel?: string
   detail?: string
   href?: string
+  accentColor?: string
   /** Extra fields used when state === 'active' to populate the What I'm up to card */
   learning?: string
   location?: string

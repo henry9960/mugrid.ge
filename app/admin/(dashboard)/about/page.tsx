@@ -596,6 +596,39 @@ export default function AdminAboutPage() {
                             onBlur={blurBorder}
                           />
                         </Field>
+                        {entry.state === 'highlighted' && (
+                          <Field label="Accent colour (optional)">
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="color"
+                                value={entry.accentColor ?? '#cccccc'}
+                                onChange={e =>
+                                  updateEntry(entry.id, { accentColor: e.target.value })
+                                }
+                                className="w-9 h-9 rounded-xl cursor-pointer p-0.5"
+                                style={{ border: '1px solid #E4E4E8', backgroundColor: '#FFFFFF' }}
+                              />
+                              {entry.accentColor ? (
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="text-xs font-mono" style={{ color: '#0A0A0A' }}>
+                                    {entry.accentColor}
+                                  </span>
+                                  <button
+                                    onClick={() => updateEntry(entry.id, { accentColor: undefined })}
+                                    className="text-xs text-left"
+                                    style={{ color: '#DC2626' }}
+                                  >
+                                    Remove colour
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-xs" style={{ color: '#ABABAB' }}>
+                                  No accent — click the swatch to pick one
+                                </span>
+                              )}
+                            </div>
+                          </Field>
+                        )}
                       </>
                     )}
                     {entry.state === 'active' && (

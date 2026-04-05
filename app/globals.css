@@ -47,6 +47,39 @@ body {
   box-sizing: border-box;
 }
 
+/* ── Click effects ──────────────────────────────────────────── */
+/* Stars */
+.cc-star {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  translate: -50% -50%;
+  animation: cc-sparkle-burst var(--dur) ease-out forwards;
+}
+@keyframes cc-sparkle-burst {
+  0%   { opacity: 0;    transform: translate(0,0) scale(0) rotate(0deg); }
+  20%  { opacity: 1;    transform: translate(var(--tx20),var(--ty20)) scale(1.15) rotate(50deg); }
+  70%  { opacity: 0.85; transform: translate(var(--tx70),var(--ty70)) scale(0.85) rotate(100deg); }
+  100% { opacity: 0;    transform: translate(var(--tx),var(--ty)) scale(0) rotate(140deg); }
+}
+
+/* Click ripple */
+.cc-click-ripple {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99998;
+  border-radius: 50%;
+  translate: -50% -50%;
+  animation: cc-ripple-expand var(--rdur, 0.55s) ease-out forwards;
+  border: 1.5px solid var(--rc, rgba(10,10,10,0.6));
+  width: 0; height: 0;
+}
+@keyframes cc-ripple-expand {
+  0%   { width: 0; height: 0; opacity: 0.7; }
+  100% { width: 60px; height: 60px; opacity: 0; }
+}
+/* ─────────────────────────────────────────────────────────── */
+
 @keyframes gradient-drift {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }

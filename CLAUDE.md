@@ -1,143 +1,313 @@
-# CLAUDE.md
+# CLAUDE.md — Project Operating Manual
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+> Henry's portfolio site. Last updated: 2026-04-05.
 
-## Commands
+---
 
+## 1. Project Overview
+
+Personal portfolio for Henry (henry9960) — a trilingual Business & Management student at Royal Holloway with internship experience at Spotify, Amazon, TikTok, Intel, and an upcoming Microsoft PM internship (Summer 2026).
+
+- **URL:** `harry.mugrid.ge`
+- **Purpose:** Professional online presence — bio, timeline, blog, contact
+- **Stage:** Live and actively developed. Core structure is complete. Content is WIP (blog posts are placeholders, several timeline detail sections say "WIP").
+- **Goal:** Polish the existing site, fill in real content, and add features as needed.
+
+---
+
+## 2. Current Build Status
+
+**Complete:**
+- Full bento grid layout (home, about, blog, contact sections)
+- Admin CMS at `/admin` — auth, all content editors, blog CRUD
+- Blog system — markdown posts, tag filtering, individual post pages
+- Timeline with 3 visual states (active/highlighted/inactive)
+- `accentColor` support on highlighted timeline cards (orange tint for Royal Holloway)
+- Click effects — multicolour star burst + ripple rings on every click (no custom cursor)
+- Music card (Spotify-style player), gallery card (photo carousel with film effects)
+- `WhatImUpToCard` — emerald gradient card with mouse-tracking glow, links to Microsoft blog post
+
+**Partially complete / WIP:**
+- Blog posts exist but contain placeholder text — Spotify detail, Royal Holloway detail, and the "How I Designed ??? to ???" post all need real content
+- `/microsoft` page redirects to `/blog/microsoft-product-manager-intern` — that post is also a placeholder
+- Royal Holloway and Spotify timeline entries have `"detail": "WIP — ..."` — need real copy
+- No `/university` page exists yet (royal_holloway entry has `href: '/university'`)
+
+**Not started:**
+- Dedicated `/university` page
+- Any analytics or visitor tracking
+- Dark mode
+
+**Broken / messy:**
+- Blog post titled "How I Designed ??? to ???" — title is a placeholder, created via admin, shows on the site
+- The `content/posts/product-showcase.md` and `ai-and-product-thinking.md` — check if these are real or placeholders before surfacing them
+
+---
+
+## 3. Architecture & Setup
+
+**Stack:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 3, Framer Motion 11
+
+**Hosting:** Vercel — auto-deploys on push to `main`. No GitHub Actions. No static export.
+
+**Key rule:** Never add `output: 'export'` to `next.config.ts` — breaks all API routes and admin.
+
+**Commands:**
 ```bash
-npm run dev      # Start dev server at localhost:3000
-npm run build    # Production build (Next.js server mode, used by Vercel)
-npm run lint     # ESLint via Next.js
+npm run dev      # localhost:3000
+npm run build    # production build
+npm run lint     # ESLint
 ```
 
-No test suite is configured.
-
-## Deployment
-
-The site is hosted on **Vercel** at `harry.mugrid.ge`. Vercel auto-deploys on every push to `main` — no manual steps needed. There is no static export; the site runs as a full Next.js server on Vercel.
-
-- `.github/workflows/deploy.yml` is a stub comment — GitHub Actions is not used.
-- `next.config.ts` has no `output: 'export'` — standard Next.js server mode.
-- Do NOT re-add `output: 'export'` — it breaks API routes and the admin CMS.
-
-## Architecture
-
-Portfolio site with a main single-page layout plus sub-pages. `app/page.tsx` is the primary route — a server component that composes four scroll-target sections inside a 1200px centred container. Section `id` attributes (`home`, `about`, `blog`, `contact`) are what the navbar scrolls to.
-
+**File structure:**
 ```
 app/
-  layout.tsx              # DM Sans font, global metadata (OG tags, Twitter card)
-  globals.css             # CSS variables, scrollbar, @keyframes
-  page.tsx                # Main route: Navbar + four sections
-  microsoft/
-    page.tsx              # /microsoft detail page (coming soon)
-  blog/
-    page.tsx              # /blog listing page — server component, passes to BlogList
-    [slug]/
-      page.tsx            # Individual post renderer with prose styles
-  admin/
-    page.tsx              # Redirects to /admin/home
-    login/
-      page.tsx            # Login form (unauthenticated)
-    (dashboard)/          # Route group — all children require auth (middleware)
-      layout.tsx          # Admin shell with sidebar nav
-      home/page.tsx       # Edit HomeSection content
-      about/page.tsx      # Edit AboutSection content
-      contact/page.tsx    # Edit ContactSection content
-      thoughts/page.tsx   # Edit "What I'm Up To" card
-      music/page.tsx      # Edit music tracks
-      gallery/page.tsx    # Edit gallery photos
-      blog/
-        page.tsx          # List + create blog posts
-        [slug]/
-          page.tsx        # Thin server wrapper → _EditPostClient.tsx
-          _EditPostClient.tsx  # Edit/delete a post (client component)
-
-  api/
-    admin/
-      auth/route.ts       # POST login, DELETE logout, GET ping
-      home/route.ts       # GET/POST home content
-      about/route.ts      # GET/POST about content
-      contact/route.ts    # GET/POST contact content
-      thoughts/route.ts   # GET/POST thoughts content
-      music/route.ts      # GET/POST music tracks
-      gallery/route.ts    # GET/POST gallery photos
-      posts/route.ts      # GET all posts / GET?slug= / PUT / DELETE?slug=
-      upload/route.ts     # POST file upload (Vercel Blob or local fallback)
+  layout.tsx                    # DM Sans font, OG/Twitter metadata
+  globals.css                   # CSS vars, @keyframes (including .cc-star, .cc-click-ripple)
+  page.tsx                      # Main route: Navbar + 4 sections (home/about/blog/contact)
+  microsoft/page.tsx            # Redirects to /blog/microsoft-product-manager-intern
+  blog/page.tsx                 # Blog listing → BlogList client component
+  blog/[slug]/page.tsx          # Individual post renderer (prose styles)
+  admin/                        # Auth-gated CMS
+    login/page.tsx
+    (dashboard)/layout.tsx      # Admin shell with sidebar
+    (dashboard)/home/page.tsx
+    (dashboard)/about/page.tsx  # Includes accent colour picker for highlighted entries
+    (dashboard)/contact/page.tsx
+    (dashboard)/thoughts/page.tsx
+    (dashboard)/music/page.tsx
+    (dashboard)/gallery/page.tsx
+    (dashboard)/blog/           # List, create, edit, delete posts
+  api/admin/                    # All CMS API routes (auth, home, about, contact, thoughts, music, gallery, posts, upload)
 
 components/
-  Navbar.tsx              # 'use client' — floating pill, scroll-spy, Framer Motion
-                          #   layoutId sliding indicator, hover preview + whileTap
-  WhatImUpToCard.tsx      # 'use client' — emerald gradient card, mouse-tracking glow,
-                          #   ripple rings, arrow link to /microsoft
-  MusicCard.tsx           # 'use client' — Spotify-style player, HTML5 Audio API,
-                          #   local files in /public/music/
-  GalleryCard.tsx         # 'use client' — photo carousel, local files in /public/gallery/,
-                          #   camera flash + focus reticle effects, film grain overlay
-  SparklyName.tsx         # 'use client' — gold star sparkle burst on load, then occasional
-  ExternalLinkButton.tsx  # Shared ↗ icon in a circle — internal Link or external <a>
-  BlogList.tsx            # 'use client' — tag filter pills + post grid for /blog page
-  CatWalk.tsx             # 'use client' — orange tabby walks right→left (unused, kept)
-  admin/
-    MarkdownEditor.tsx    # Textarea-based markdown editor used in blog post forms
+  Navbar.tsx                    # Framer Motion floating pill, scroll-spy
+  CustomCursor.tsx              # Click effects only (no cursor) — star burst + ripple
+  WhatImUpToCard.tsx            # Emerald gradient "What I'm up to" card
+  MusicCard.tsx                 # HTML5 audio player
+  GalleryCard.tsx               # Photo carousel, film effects
+  SparklyName.tsx               # Gold sparkle on name load
+  ExternalLinkButton.tsx        # Shared ↗ icon component
+  BlogList.tsx                  # Client tag filter + post grid
   sections/
-    HomeSection.tsx       # Server component — 12-col bento grid
-    AboutSection.tsx      # 'use client' — about blocks + 3-state timeline,
-                          #   NeuralNetworkCanvas (canvas animation) on Microsoft card,
-                          #   spinning MS conic-gradient border, expandable highlighted cards
-    BlogSection.tsx       # Server component — 3 most recent posts from content/posts/,
-                          #   "View all" link to /blog
-    ContactSection.tsx    # 'use client' — platform cards (hover → brand colour + 0.18s
-                          #   transition), email card (copy + mailto), GitHub "Soon" card
+    HomeSection.tsx             # Server component, 12-col bento grid
+    AboutSection.tsx            # Client — about blocks + timeline + NeuralNetworkCanvas
+    BlogSection.tsx             # Server — 3 most recent posts
+    ContactSection.tsx          # Client — social cards, email copy, GitHub card
 
 lib/
-  posts.ts                # Build-time markdown reader: gray-matter + marked,
-                          #   getAllPosts / getPostBySlug / getAllTags / formatPostDate
-  github-content.ts       # GitHub Contents API helpers: githubWriteFile / githubDeleteFile
-                          #   Falls back to filesystem writes when GITHUB_TOKEN not set (local dev)
-  admin/
-    auth.ts               # PBKDF2 password verify, session token helpers
-    content.ts            # readContent (filesystem) / writeContent (→ githubWriteFile)
+  posts.ts                      # gray-matter + marked, getAllPosts/getPostBySlug/getAllTags
+  github-content.ts             # GitHub Contents API write/delete (filesystem fallback locally)
+  admin/auth.ts                 # PBKDF2 password verify, session token helpers
+  admin/content.ts              # readContent / writeContent
 
-middleware.ts             # Protects /admin/(dashboard)/* routes — redirects to /admin/login
+middleware.ts                   # Protects /admin/(dashboard)/* → redirects to /admin/login
 
 content/
-  posts/
-    *.md                  # Markdown blog posts with YAML frontmatter
-  data/
-    *.json                # CMS-managed content (home.json, about.json, contact.json, etc.)
-                          # Edited via admin and committed to GitHub via API
+  posts/*.md                    # Blog posts (YAML frontmatter + markdown body)
+  data/*.json                   # CMS-managed content (home, about, contact, thoughts, music, gallery)
 
 public/
-  gallery/                # Local photos for GalleryCard (photo1.jpg … photo5.JPG)
-  music/                  # Local audio files for MusicCard
+  gallery/                      # Local photos (photo1.jpg … photo5.JPG)
+  music/                        # Local audio files
 ```
 
-## Admin CMS
+**Admin auth:**
+- PBKDF2 password hash stored in `ADMIN_PASSWORD_HASH` env var
+- Session stored as HTTP-only cookie (`admin_session`)
+- `middleware.ts` guards all `/admin/(dashboard)/*` routes
 
-The admin lives at `/admin`. Authentication uses an HTTP-only session cookie.
-
-**How saves work:**
-1. Admin form → POST to `/api/admin/*`
-2. API route calls `writeContent()` → `githubWriteFile()`
-3. GitHub Contents API commits the file to the repo
-4. Vercel detects the push and rebuilds (~1 min)
-5. New content appears on the live site
-
-**Local dev:** When `GITHUB_TOKEN` is not set, writes go directly to the filesystem instead.
-
-**Required environment variables** (set in Vercel dashboard):
+**Environment variables (Vercel dashboard):**
 
 | Variable | Purpose |
 |---|---|
-| `ADMIN_PASSWORD_HASH` | PBKDF2 hash — format: `pbkdf2:sha256:100000:<salt>:<hash>` |
-| `ADMIN_TOKEN` | 64-char random hex — stored in session cookie |
-| `GITHUB_TOKEN` | Fine-grained PAT with Contents: read+write on this repo |
+| `ADMIN_PASSWORD_HASH` | `pbkdf2:sha256:100000:<salt>:<hash>` |
+| `ADMIN_TOKEN` | 64-char hex — stored in session cookie |
+| `GITHUB_TOKEN` | Fine-grained PAT with Contents read+write |
 | `GITHUB_OWNER` | `henry9960` |
 | `GITHUB_REPO` | `mugrid.ge` |
-| `BLOB_READ_WRITE_TOKEN` | Auto-set by Vercel Blob — for image uploads (optional locally) |
+| `BLOB_READ_WRITE_TOKEN` | Auto-set by Vercel Blob (image uploads) |
 
-**Generating credentials locally:**
+**Local dev env:** `.env.local` lives in the project root. If running from a git worktree, copy it in — worktrees do not inherit it automatically.
+
+**How admin saves work:**
+1. Form → POST `/api/admin/*`
+2. API → `writeContent()` → `githubWriteFile()` (GitHub Contents API)
+3. GitHub commit → Vercel detects push → auto-rebuild (~1 min)
+4. Local dev (no `GITHUB_TOKEN`): writes go directly to filesystem
+
+---
+
+## 4. Product & Design Rules
+
+**Colours:**
+- Page background: `#FFFFFF`
+- Card background: `#F7F7F9`
+- Primary text: `#0A0A0A`
+- Secondary text: `#6B6B6B`
+- Muted text: `#ABABAB`
+- Borders: `#E4E4E8`
+- Accent colours only on interactive or branded elements — inline hex, not Tailwind arbitrary where possible
+
+**Grid:** 12-column (`grid-cols-12 gap-4`). All layout uses column spans. 1200px centred container.
+
+**Spacing:** 8pt scale — Tailwind defaults (p-4=16px, p-6=24px, p-8=32px).
+
+**Cards:** `bg-[#F7F7F9] rounded-3xl` (24px radius). Hover states use inline `onMouseEnter`/`onMouseLeave` + `transition` on `style` prop — not Tailwind hover classes.
+
+**Framer Motion:** Only in `Navbar.tsx` (`layoutId="nav-pill"`, `whileTap`). Do not add elsewhere without strong reason.
+
+**`'use client'`:** Server components are the default. Only add the directive when browser APIs are required.
+
+**ExternalLinkButton:** Use for every "opens another page" affordance. Props: `href`, `external` (bool), `bg`, `color`, `hoverBg`, `size`.
+
+**SVG arrow icon:** `<path d="M7 17L17 7M17 7H7M17 7v10" />` — used consistently for external links.
+
+**Click effects:** Defined in `CustomCursor.tsx` + `globals.css`. Stars spawn on every click; emerald colours when clicking a link/button, gold/multicolour otherwise. Zoom-corrected coordinates (CSS zoom on `html` affects `clientX/clientY`).
+
+---
+
+## 5. Content Model
+
+**CMS-managed (admin editable, stored in `content/data/*.json`, committed via GitHub API):**
+- `home.json` — name, tagline, bio, nowStatus
+- `about.json` — blocks (background/what's next/hobbies), location, full timeline array
+- `contact.json` — email, social links (platform/handle/url/enabled)
+- `thoughts.json` — "What I'm up to" card content
+- `music.json` — track list (title/artist/album/albumArtUrl/src/startTime)
+- `gallery.json` — photo list (src/caption)
+
+**Blog posts (`content/posts/*.md`):**
+```yaml
+---
+title: Post Title
+date: 2026-04-10
+tags: [Product, AI]
+description: One sentence summary.
+---
+Markdown body...
+```
+- Sorted by date descending. `BlogSection` shows 3 most recent.
+- `gray-matter` parses dates as `Date` objects — always use `toISODate()` helper in `lib/posts.ts`, never `String().slice()`.
+- Slugs are derived from filenames.
+
+**Timeline (`content/data/about.json`):**
+
+| State | Appearance |
+|---|---|
+| `active` | Spinning conic-gradient border, NeuralNetworkCanvas, "Now" badge |
+| `highlighted` | White card, double-ring dot, expandable detail section, badge label, optional `accentColor` |
+| `inactive` | Muted grey text, hollow dot |
+
+- `accentColor?: string` (hex) — tints background (6% opacity), border (35% opacity), badge (12% opacity) of highlighted cards
+- `href?: string` — adds an `ExternalLinkButton` to the card
+- `detail?: string` — expandable content shown on click (highlighted state only)
+- `badgeLabel?: string` — label text on the badge chip
+
+**Gallery photos:**
+- Drop files into `/public/gallery/`
+- Add entries to `PHOTOS` array in `GalleryCard.tsx`: `{ src: '/gallery/filename.jpg', caption: '...' }`
+
+---
+
+## 6. Key Decisions Made
+
+- **No static export** — site runs as a full Next.js server on Vercel. `output: 'export'` was removed because it broke API routes. Never re-add it.
+- **No dynamic API segments** — all post operations go to `/api/admin/posts` with `?slug=` query params. `/api/admin/posts/[slug]` does not exist and should not be created.
+- **No `isomorphic-dompurify`** — its `jsdom` dependency breaks webpack bundling. Was removed. Do not re-add.
+- **GitHub Contents API for writes** — admin saves commit directly to the repo, which triggers Vercel rebuild. This is intentional; it means content changes are version-controlled.
+- **Click effects only, no custom cursor** — custom cursor was removed; only the star-burst + ripple effects on click remain. This was a deliberate UX decision.
+- **Framer Motion isolated to Navbar** — adding it elsewhere requires justification.
+- **`accentColor` on timeline** — per-entry hex colour field that tints highlighted cards; admin exposes a colour picker only for `highlighted` state entries.
+- **`/microsoft` redirects to blog post** — there is no dedicated Microsoft page; it redirects to the blog post slug.
+
+---
+
+## 7. Current Priorities
+
+**Immediate (content that needs filling in):**
+1. Write real detail text for Spotify timeline entry (currently "WIP")
+2. Write real detail text for Royal Holloway timeline entry (currently "WIP")
+3. Rename/rewrite "How I Designed ??? to ???" blog post — it has a placeholder title
+4. Flesh out the Microsoft blog post (`microsoft-product-manager-intern.md`) beyond its skeleton
+
+**Short-term (features/pages):**
+- Build `/university` page — Royal Holloway timeline entry links to it but it doesn't exist
+- Decide what to do with `product-showcase.md` and `ai-and-product-thinking.md` — real content or delete
+
+---
+
+## 8. Known Issues & Risks
+
+- **"How I Designed ??? to ???" shows on live site** — placeholder blog post with a broken title is publicly visible
+- **`/university` 404** — the Royal Holloway timeline card has `href: '/university'` but that route doesn't exist
+- **WIP timeline details** — Spotify and Royal Holloway `detail` fields are placeholder text; they appear if a user expands those cards
+- **Env vars not in worktrees** — `.env.local` is only in the project root. Running dev from a git worktree = no env vars = admin login fails. Fix: copy `.env.local` into the worktree.
+- **Vercel env var changes need manual redeploy** — auto-deploy only fires on git push
+- **Blog rebuild lag** — new posts take ~1 min after commit to appear on the live site
+- **No test suite** — all verification is manual or via preview
+
+---
+
+## 9. Working Instructions for Future Claude Sessions
+
+- **Read the file before editing it.** The Read tool is required before any Edit or Write call — the system enforces this.
+- **Prefer Edit over Write** for existing files — only rewrite a file completely if the change is pervasive.
+- **Check the worktree `.env.local`** at session start if any admin or auth work is needed. It may be missing.
+- **Content changes go through `content/data/*.json`** — do not hardcode content into components unless it's purely structural.
+- **Timeline data lives in `content/data/about.json`**, not in `AboutSection.tsx` — the CLAUDE.md previously said "ABOUT_BLOCKS array in AboutSection.tsx" and "TIMELINE array in AboutSection.tsx" but these have been migrated to the JSON file and the CMS.
+- **Do not touch Framer Motion** unless specifically asked — it's isolated to Navbar.
+- **Incremental over large refactors** — this is a live production site. Make targeted changes.
+- **Verify in the preview after UI changes** — use `preview_screenshot` or `preview_inspect` to confirm visual changes before ending a turn.
+- **Click effects are in two places:** JS logic in `CustomCursor.tsx`, CSS keyframes in `globals.css`. Both must be in sync.
+- **API routes use query params, not dynamic segments** — pattern: `/api/admin/posts?slug=x` not `/api/admin/posts/[x]`.
+
+---
+
+## 10. Quick Start for Next Session
+
+**Read first:**
+1. This file (CLAUDE.md) — already done
+2. `content/data/about.json` — live timeline/about data
+3. The specific component file you're editing
+
+**Before coding:**
+- Check whether `.env.local` exists in the worktree if auth/admin is involved
+- Run `npm run dev` and open `localhost:3000` to confirm the dev server is clean
+- Check `preview_console_logs` for errors before making changes
+
+**Most-edited files recently:**
+- `content/data/about.json` — timeline data
+- `components/sections/AboutSection.tsx` — timeline rendering
+- `app/admin/(dashboard)/about/page.tsx` — admin about editor
+- `app/globals.css` — click effects CSS
+- `components/CustomCursor.tsx` — click effects JS
+
+---
+
+## Session Snapshot
+
+**Last worked on (2026-04-05):**
+- Added `accentColor` support to timeline entries — Royal Holloway card now shows an orange tint (`#E87722`) on background, border, and badge
+- Added accent colour picker to admin `/admin/about` — appears only for `highlighted` state entries
+- Added click effects (star burst + ripple rings) across the whole site via `CustomCursor.tsx` + `globals.css`
+- Fixed admin login failure in worktrees — `.env.local` was missing from the worktree directory
+
+**Next session should:**
+1. Fill in real content for Spotify and Royal Holloway timeline detail fields
+2. Rename the "How I Designed ??? to ???" placeholder post or delete it
+3. Decide whether to build the `/university` page (Royal Holloway card links to it)
+
+**Warnings before editing:**
+- `/university` route does not exist — creating a link to it will 404
+- The blog post "How I Designed ??? to ???" is live on the public site with a broken title
+- Do not add `output: 'export'` to `next.config.ts` under any circumstances
+- If working from a git worktree, check that `.env.local` is present in the worktree root before testing admin features
+
+---
+
+## Reference: Generating Admin Credentials
+
 ```bash
 # ADMIN_TOKEN
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
@@ -151,94 +321,4 @@ node -e "
 "
 ```
 
-After changing env vars in Vercel, you must **redeploy** for them to take effect.
-
-## Blog System
-
-Posts live in `content/posts/` as `.md` files. Frontmatter format:
-
-```md
----
-title: Post Title
-date: 2026-04-10
-tags: [Product, AI]
-description: One sentence summary shown in cards.
----
-
-Content in markdown...
-```
-
-- Posts are sorted by date descending.
-- `BlogSection` on the home page shows the 3 most recent.
-- `/blog` shows all posts with client-side tag filtering.
-- `/blog/[slug]` renders the full post with prose styles.
-- Read time is auto-estimated (~200 wpm).
-- `gray-matter` parses YAML dates as `Date` objects — always use `toISODate()` helper in `lib/posts.ts`, not `String().slice()`.
-- Blog posts can also be created/edited/deleted via the admin at `/admin/blog`.
-
-## Timeline (AboutSection)
-
-Three visual states defined in the `TIMELINE` array:
-
-| State | Appearance |
-|---|---|
-| `active` | Spinning conic-gradient MS border, NeuralNetworkCanvas, "Now" badge |
-| `highlighted` | White card with double-ring dot, badge label, expandable detail (grid-template-rows trick) |
-| `inactive` | Muted grey text, hollow dot |
-
-To add a page link to a timeline entry, add `href: '/page-slug'` — an `ExternalLinkButton` renders automatically.
-
-## Design System
-
-**Colours** — white page (`#FFFFFF`), cards `#F7F7F9`. Raw hex values inline when needed. Accent colours only on interactive elements.
-
-**Grid** — 12-column (`grid-cols-12`) with `gap-4` (16px). All layout uses column spans.
-
-**Spacing** — 8pt scale. Prefer Tailwind's default scale (p-4 = 16px, p-6 = 24px, p-8 = 32px).
-
-**Cards** — `bg-[#F7F7F9] rounded-3xl` (24px radius). Interactive cards use inline `onMouseEnter`/`onMouseLeave` with `transition` on the style prop.
-
-**Framer Motion** — used only in Navbar (sliding pill `layoutId="nav-pill"`, `whileTap` press animation). Do not add elsewhere without strong reason.
-
-**ExternalLinkButton** — standardised ↗ icon component. Use for any "opens another page" affordance. Accepts `href`, `external` (boolean), `bg`, `color`, `hoverBg`, `size`.
-
-**`'use client'` boundary** — only components needing browser APIs are client components. Keep server components as the default.
-
-**SVG arrow icon** — `<path d="M7 17L17 7M17 7H7M17 7v10" />` — used consistently across the site for external links and navigation indicators.
-
-## Key Content Locations
-
-| What | Where |
-|---|---|
-| Bio text | `components/sections/HomeSection.tsx` |
-| About blocks | `ABOUT_BLOCKS` array in `AboutSection.tsx` |
-| Timeline entries | `TIMELINE` array in `AboutSection.tsx` |
-| "What I'm up to" card | `components/WhatImUpToCard.tsx` |
-| Music tracks | `MusicCard.tsx` + `/public/music/` |
-| Gallery photos | `GalleryCard.tsx` PHOTOS array + `/public/gallery/` |
-| Blog posts | `content/posts/*.md` |
-| CMS data files | `content/data/*.json` |
-| Site metadata / OG | `app/layout.tsx` |
-| Microsoft page | `app/microsoft/page.tsx` |
-
-## Adding Gallery Photos
-
-Drop files into `/public/gallery/` then add entries to the `PHOTOS` array in `GalleryCard.tsx`:
-
-```ts
-{ src: '/gallery/filename.jpg', caption: 'Optional caption' }
-```
-
-The first entry is always shown first.
-
-## Neural Network Canvas Effect
-
-`NeuralNetworkCanvas` in `AboutSection.tsx` — 16 drifting nodes in MS brand colours (`#F25022`, `#7FBA00`, `#00A4EF`, `#FFB900`) connected by lines when within 70px. Speed 0.35, opacity pulses ±0.004/frame. Canvas `400×100`, `pointerEvents: none`, absolutely inset. Documented in `memory/project_neural_network_effect.md`.
-
-## Known Gotchas
-
-- **Do not use `isomorphic-dompurify`** — its `jsdom` dependency chain breaks webpack bundling. It was removed; do not re-add it.
-- **Do not add `output: 'export'` to next.config.ts** — breaks all API routes and the admin.
-- **Dynamic API routes** (`/api/admin/posts/[slug]`) were eliminated — all post operations use `/api/admin/posts` with query params (`?slug=x`) to avoid static export issues. Keep this pattern.
-- **Env var changes in Vercel require a manual redeploy** — auto-deploy only triggers on git push.
-- **New blog posts take ~1 min to appear** — Vercel must rebuild after the GitHub commit.
+After changing env vars in Vercel, trigger a manual redeploy — env var changes don't auto-deploy.

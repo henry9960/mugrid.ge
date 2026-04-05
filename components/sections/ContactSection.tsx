@@ -190,6 +190,22 @@ function EmailCard({ email, className = '' }: { email: string; className?: strin
     mouse.current = { x: e.clientX - r.left - r.width / 2, y: e.clientY - r.top - r.height / 2 }
   }
 
+  const handleMailApp = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    // Try native mailto first. If the window doesn't blur within 500ms
+    // (i.e. no mail app opened), fall back to Gmail compose in a new tab.
+    let opened = false
+    const onBlur = () => { opened = true }
+    window.addEventListener('blur', onBlur, { once: true })
+    window.location.href = `mailto:${email}`
+    setTimeout(() => {
+      window.removeEventListener('blur', onBlur)
+      if (!opened) {
+        window.open(`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}`, '_blank')
+      }
+    }, 500)
+  }
+
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault()
     navigator.clipboard.writeText(email).then(() => {
@@ -273,6 +289,7 @@ function EmailCard({ email, className = '' }: { email: string; className?: strin
       <div className="flex md:flex-col gap-2 relative">
         <a
           href={`mailto:${email}`}
+          onClick={handleMailApp}
           className="flex-1 flex items-center justify-center md:justify-between rounded-2xl px-3 py-2 md:px-4 md:py-3 no-underline"
           style={{ backgroundColor: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.1)', transition: 'background 0.15s ease-out' }}
           onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.18)')}

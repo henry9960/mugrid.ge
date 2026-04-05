@@ -74,7 +74,9 @@
       "period": "2023 – 2027",
       "state": "highlighted",
       "badgeLabel": "University",
-      "detail": "WIP — add society roles, leadership positions, sports teams, and other campus activities here."
+      "accentColor": "#E87722",
+      "detail": "WIP — add society roles, leadership positions, sports teams, and other campus activities here.",
+      "href": "/blog/university"
     },
     {
       "id": "comikey",

@@ -91,6 +91,13 @@ function NeuralNetworkCanvas() {
   )
 }
 
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r},${g},${b},${alpha})`
+}
+
 function Divider() {
   return <hr className="border-t border-[#E4E4E8] my-4" />
 }
@@ -205,8 +212,8 @@ export default function AboutSection({ data }: AboutSectionProps) {
                         <div
                           className="rounded-xl border cursor-pointer select-none"
                           style={{
-                            backgroundColor: '#FFFFFF',
-                            borderColor: '#E4E4E8',
+                            backgroundColor: item.accentColor ? hexToRgba(item.accentColor, 0.06) : '#FFFFFF',
+                            borderColor: item.accentColor ? hexToRgba(item.accentColor, 0.35) : '#E4E4E8',
                             padding: '10px 12px',
                           }}
                           onClick={() => setExpanded(isExpanded ? null : item.id)}
@@ -219,7 +226,10 @@ export default function AboutSection({ data }: AboutSectionProps) {
                                 </p>
                                 <span
                                   className="text-[9px] font-semibold rounded-full px-1.5 py-0.5 flex-shrink-0"
-                                  style={{ color: '#6B6B6B', backgroundColor: '#F0F0F3' }}
+                                  style={{
+                                    color: item.accentColor ?? '#6B6B6B',
+                                    backgroundColor: item.accentColor ? hexToRgba(item.accentColor, 0.12) : '#F0F0F3',
+                                  }}
                                 >
                                   {item.badgeLabel ?? 'Key exp.'}
                                 </span>
