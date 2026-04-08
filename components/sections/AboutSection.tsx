@@ -136,6 +136,27 @@ interface AboutSectionProps {
 
 export default function AboutSection({ data }: AboutSectionProps) {
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [arrowHovered, setArrowHovered] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  function scrollTimeline() {
+    const el = scrollRef.current
+    if (!el) return
+    const start = el.scrollTop
+    const target = start + 220
+    const duration = 600
+    const startTime = performance.now()
+    function ease(t: number) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+    }
+    function step(now: number) {
+      const elapsed = now - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      el.scrollTop = start + (target - start) * ease(progress)
+      if (progress < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }
 
   return (
     <div className="grid grid-cols-12 gap-4 items-stretch">
@@ -169,11 +190,12 @@ export default function AboutSection({ data }: AboutSectionProps) {
 
         <div className="relative flex-1 min-h-0 overflow-hidden">
           <div
+            ref={scrollRef}
             className="overflow-y-auto md:absolute md:inset-0 max-h-[480px] md:max-h-none"
             style={{
               scrollbarWidth: 'none',
-              maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
-              WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
+              maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
             }}
           >
             <style>{`
@@ -191,7 +213,7 @@ export default function AboutSection({ data }: AboutSectionProps) {
                 100% { background-position:  200% center; }
               }
             `}</style>
-            <div className="timeline-scroll space-y-0 px-1">
+            <div className="timeline-scroll space-y-0 px-1 pb-5">
               {data.timeline.map((item, i) => {
                 const isLast        = i === data.timeline.length - 1
                 const isExpanded    = expanded === item.id
@@ -225,9 +247,9 @@ export default function AboutSection({ data }: AboutSectionProps) {
                           }}
                           onClick={() => setExpanded(isExpanded ? null : item.id)}
                         >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0 overflow-hidden">
-                              <div className="flex items-center gap-1.5 mb-0.5">
+                          <div>
+                            <div className="flex items-center justify-between gap-2 mb-0.5">
+                              <div className="flex items-center gap-1.5 min-w-0">
                                 <p className="text-sm font-semibold text-[#0A0A0A] whitespace-pre-line">
                                   {item.company}
                                 </p>
@@ -241,23 +263,23 @@ export default function AboutSection({ data }: AboutSectionProps) {
                                   {item.badgeLabel ?? 'Key exp.'}
                                 </span>
                               </div>
-                              <p className="text-xs text-[#6B6B6B]">{item.role}</p>
-                              <p className="text-xs text-[#ABABAB] mt-0.5 truncate">{item.description}</p>
+                              <div className="flex items-center gap-1.5 flex-shrink-0">
+                                <span className="text-xs text-[#ABABAB] whitespace-nowrap">{item.period}</span>
+                                <svg
+                                  width="12" height="12" viewBox="0 0 24 24"
+                                  fill="none" stroke="#ABABAB" strokeWidth="2.5"
+                                  strokeLinecap="round" strokeLinejoin="round"
+                                  style={{
+                                    transition: 'transform 0.25s ease',
+                                    transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                  }}
+                                >
+                                  <path d="M6 9l6 6 6-6" />
+                                </svg>
+                              </div>
                             </div>
-                            <div className="flex flex-col items-end flex-shrink-0 gap-1.5">
-                              <span className="text-xs text-[#ABABAB] whitespace-nowrap">{item.period}</span>
-                              <svg
-                                width="12" height="12" viewBox="0 0 24 24"
-                                fill="none" stroke="#ABABAB" strokeWidth="2.5"
-                                strokeLinecap="round" strokeLinejoin="round"
-                                style={{
-                                  transition: 'transform 0.25s ease',
-                                  transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                                }}
-                              >
-                                <path d="M6 9l6 6 6-6" />
-                              </svg>
-                            </div>
+                            <p className="text-xs text-[#6B6B6B]">{item.role}</p>
+                            <p className="text-xs text-[#ABABAB] mt-0.5 leading-relaxed">{item.description}</p>
                           </div>
 
                           <div
@@ -293,9 +315,9 @@ export default function AboutSection({ data }: AboutSectionProps) {
                             overflow: 'hidden',
                           }}>
                             <NeuralNetworkCanvas />
-                            <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
-                              <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                            <div style={{ position: 'relative' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '2px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
                                   <p style={{ fontSize: '14px', fontWeight: 600, color: '#0A0A0A', margin: 0 }}>
                                     {item.company}
                                   </p>
@@ -316,30 +338,28 @@ export default function AboutSection({ data }: AboutSectionProps) {
                                     />
                                   )}
                                 </div>
-                                <p style={{ fontSize: '12px', color: '#6B6B6B', margin: 0 }}>{item.role}</p>
-                                <p style={{ fontSize: '12px', color: '#ABABAB', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.description}</p>
+                                <span style={{ fontSize: '12px', color: '#ABABAB', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                                  {item.period}
+                                </span>
                               </div>
-                              <span style={{ fontSize: '12px', color: '#ABABAB', whiteSpace: 'nowrap', flexShrink: 0, marginTop: '1px' }}>
-                                {item.period}
-                              </span>
+                              <p style={{ fontSize: '12px', color: '#6B6B6B', margin: 0 }}>{item.role}</p>
+                              <p style={{ fontSize: '12px', color: '#ABABAB', marginTop: '2px', lineHeight: '1.5' }}>{item.description}</p>
                             </div>
                           </div>
                         </div>
 
                       ) : (
-                        <div className="flex items-start justify-between">
-                          <div className="min-w-0 overflow-hidden">
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <p className="text-sm font-semibold whitespace-pre-line" style={{ color: '#7A7A7A' }}>
-                                {item.company}
-                              </p>
-                            </div>
-                            <p className="text-xs" style={{ color: '#9A9A9A' }}>{item.role}</p>
-                            <p className="text-xs mt-0.5 truncate" style={{ color: '#C0C0C6' }}>{item.description}</p>
+                        <div>
+                          <div className="flex items-center justify-between gap-2 mb-0.5">
+                            <p className="text-sm font-semibold whitespace-pre-line" style={{ color: '#7A7A7A' }}>
+                              {item.company}
+                            </p>
+                            <span className="text-xs whitespace-nowrap flex-shrink-0" style={{ color: '#C0C0C6' }}>
+                              {item.period}
+                            </span>
                           </div>
-                          <span className="text-xs whitespace-nowrap ml-3 mt-0.5 flex-shrink-0" style={{ color: '#C0C0C6' }}>
-                            {item.period}
-                          </span>
+                          <p className="text-xs" style={{ color: '#9A9A9A' }}>{item.role}</p>
+                          <p className="text-xs mt-0.5 leading-relaxed" style={{ color: '#C0C0C6' }}>{item.description}</p>
                         </div>
                       )}
                     </div>
@@ -350,14 +370,33 @@ export default function AboutSection({ data }: AboutSectionProps) {
           </div>
 
           <div
-            className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none flex flex-col items-center justify-end pb-1"
-            style={{ background: 'linear-gradient(to bottom, transparent, #F7F7F9)' }}
+            className="absolute bottom-0 left-0 right-0 h-10 flex flex-col items-center justify-end pb-1"
+            style={{ background: 'linear-gradient(to bottom, transparent, #F7F7F9)', pointerEvents: 'none' }}
           >
-            <span style={{ animation: 'scroll-hint 1.5s ease-in-out infinite' }}>
+            <button
+              onClick={scrollTimeline}
+              onMouseEnter={() => setArrowHovered(true)}
+              onMouseLeave={() => setArrowHovered(false)}
+              style={{
+                pointerEvents: 'auto',
+                background: arrowHovered ? 'rgba(0,0,0,0.07)' : 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                transition: 'background 0.2s ease, opacity 0.2s ease',
+                opacity: arrowHovered ? 1 : 0.45,
+                animation: arrowHovered ? 'none' : 'scroll-hint 1.5s ease-in-out infinite',
+              }}
+            >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ABABAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 9l6 6 6-6" />
               </svg>
-            </span>
+            </button>
           </div>
         </div>
       </div>
