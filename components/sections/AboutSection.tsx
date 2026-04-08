@@ -138,10 +138,10 @@ export default function AboutSection({ data }: AboutSectionProps) {
   const [expanded, setExpanded] = useState<string | null>(null)
 
   return (
-    <div className="grid grid-cols-12 gap-4">
+    <div className="grid grid-cols-12 gap-4 items-stretch">
 
       {/* ── About card ────────────────────────────────── */}
-      <div className="col-span-12 md:col-span-7 bg-[#F7F7F9] rounded-3xl p-8">
+      <div className="col-span-12 md:col-span-7 bg-[#F7F7F9] rounded-3xl p-8 flex flex-col">
         <h2 className="text-2xl font-semibold text-[#0A0A0A]">About</h2>
         <Divider />
         <div className="space-y-5">
@@ -163,12 +163,19 @@ export default function AboutSection({ data }: AboutSectionProps) {
       </div>
 
       {/* ── Timeline card ─────────────────────────────── */}
-      <div className="col-span-12 md:col-span-5 bg-[#F7F7F9] rounded-3xl p-8">
+      <div className="col-span-12 md:col-span-5 bg-[#F7F7F9] rounded-3xl p-8 flex flex-col">
         <h2 className="text-2xl font-semibold text-[#0A0A0A]">Timeline</h2>
         <Divider />
 
-        <div className="relative">
-          <div className="overflow-y-auto max-h-[380px]" style={{ scrollbarWidth: 'none' }}>
+        <div className="relative flex-1 min-h-0 overflow-hidden">
+          <div
+            className="overflow-y-auto absolute inset-0"
+            style={{
+              scrollbarWidth: 'none',
+              maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
+            }}
+          >
             <style>{`
               .timeline-scroll::-webkit-scrollbar { display: none; }
               @keyframes scroll-hint {

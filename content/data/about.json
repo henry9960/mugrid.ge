@@ -3,18 +3,18 @@
   "blocks": [
     {
       "id": "background",
-      "label": "Background",
-      "text": "Born in the UK, raised across Switzerland and Turkey, shaping a global perspective early on and led to me being trilingual in English, Turkish and German. Currently studying Business and Management at Royal Holloway, with prior internships at Amazon and Spotify."
+      "label": "Path",
+      "text": "Born in the UK, I grew up between Switzerland and Turkey, giving me a global perspective and fluency in English, Turkish, and German.\n\nI'm currently studying Business & Management at Royal Holloway, alongside building experience across Amazon, Spotify, and now Microsoft."
     },
     {
       "id": "whats_next",
-      "label": "What's next",
-      "text": "Currently interning at Intel and will be joining Microsoft this summer to work within their MSAI team. Looking forward to learning more about Product Management."
+      "label": "Now",
+      "text": "Right now I'm interning at Intel, and I'll be joining Microsoft's MSAI team as a Product Manager Intern this summer.\n\nI'm especially interested in AI-native products, experimentation, and how new tools are changing the way we build."
     },
     {
       "id": "hobbies",
-      "label": "Hobbies",
-      "text": "Hiking, climbing, photography, traveling and coffee."
+      "label": "In my free time",
+      "text": "I'm usually hiking, climbing, taking photos, or traveling to cool new spots."
     }
   ],
   "location": "London, United Kingdom",
@@ -23,7 +23,7 @@
       "id": "microsoft",
       "company": "Microsoft",
       "role": "Product Manager Intern",
-      "description": "Incoming Product intern in the MSAI team",
+      "description": "Working on AI-driven products in the MSAI team",
       "period": "Summer 2026",
       "state": "active",
       "href": "/blog/microsoft-product-manager-intern",
