@@ -152,7 +152,7 @@ export default function AboutSection({ data }: AboutSectionProps) {
     function step(now: number) {
       const elapsed = now - startTime
       const progress = Math.min(elapsed / duration, 1)
-      el.scrollTop = start + (target - start) * ease(progress)
+      el!.scrollTop = start + (target - start) * ease(progress)
       if (progress < 1) requestAnimationFrame(step)
     }
     requestAnimationFrame(step)
