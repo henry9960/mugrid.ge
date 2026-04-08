@@ -169,7 +169,7 @@ export default function AboutSection({ data }: AboutSectionProps) {
 
         <div className="relative flex-1 min-h-0 overflow-hidden">
           <div
-            className="overflow-y-auto absolute inset-0"
+            className="overflow-y-auto md:absolute md:inset-0 max-h-[480px] md:max-h-none"
             style={{
               scrollbarWidth: 'none',
               maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
