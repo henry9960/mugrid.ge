@@ -60,8 +60,8 @@ body {
   width: 0; height: 0;
 }
 @keyframes cc-ripple-expand {
-  0%   { width: 0; height: 0; opacity: 0.7; }
-  100% { width: 60px; height: 60px; opacity: 0; }
+  0%   { width: 0; height: 0; opacity: var(--rop, 0.7); }
+  100% { width: var(--rsize, 60px); height: var(--rsize, 60px); opacity: 0; }
 }
 /* ─────────────────────────────────────────────────────────── */
 
