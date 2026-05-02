@@ -12,18 +12,18 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: 'Harry Mugridge',
-  description: 'Product Manager & Student at Royal Holloway. Previously at Microsoft, Amazon and Spotify.',
+  description: 'Welcome to my corner on the internet to build and share ideas.',
   openGraph: {
     title: 'Harry Mugridge',
-    description: 'Product Manager & Student at Royal Holloway. Previously at Microsoft, Amazon and Spotify.',
+    description: 'Welcome to my corner on the internet to build and share ideas.',
     url: 'https://harry.mugrid.ge',
     siteName: 'Harry Mugridge',
     type: 'website',
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Harry Mugridge',
-    description: 'Product Manager & Student at Royal Holloway. Previously at Microsoft, Amazon and Spotify.',
+    description: 'Welcome to my corner on the internet to build and share ideas.',
   },
 }
 
