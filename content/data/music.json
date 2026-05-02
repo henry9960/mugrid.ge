@@ -15,6 +15,22 @@
       "albumArtUrl": "/music/art/Blue Spring cover.jpg",
       "src": "/music/Nathan Micay - Blue Spring (SPOTISAVER).mp3",
       "startTime": 0
+    },
+    {
+      "title": "Tumblr Girls",
+      "artist": "G-Eazy",
+      "album": "Must Be Nice",
+      "albumArtUrl": null,
+      "src": "/music/G-Eazy - Tumblr Girls (SPOTISAVER).mp3",
+      "startTime": 0
+    },
+    {
+      "title": "Daylight",
+      "artist": "Matt & Kim",
+      "album": "Grand",
+      "albumArtUrl": null,
+      "src": "/music/Matt & Kim - Daylight.mp3",
+      "startTime": 0
     }
   ]
 }
