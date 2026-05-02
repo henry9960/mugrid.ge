@@ -4,7 +4,19 @@ import BlogList from '@/components/BlogList'
 
 export const metadata = {
   title: 'Blog — Harry Mugridge',
-  description: 'Thoughts on product, AI, and building things.',
+  description: 'Thoughts on product, AI, and building things that matter.',
+  openGraph: {
+    title: 'Blog — Harry Mugridge',
+    description: 'Thoughts on product, AI, and building things that matter.',
+    url: 'https://harry.mugrid.ge/blog',
+    siteName: 'Harry Mugridge',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog — Harry Mugridge',
+    description: 'Thoughts on product, AI, and building things that matter.',
+  },
 }
 
 export default function BlogPage() {
