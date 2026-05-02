@@ -8,9 +8,25 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const post = getPostBySlug(slug)
+  const title = `${post.title} — Harry Mugridge`
+  const url = `https://harry.mugrid.ge/blog/${slug}`
   return {
-    title: `${post.title} — Harry Mugridge`,
+    title,
     description: post.description,
+    openGraph: {
+      title,
+      description: post.description,
+      url,
+      siteName: 'Harry Mugridge',
+      type: 'article',
+      publishedTime: post.date,
+      tags: post.tags,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description: post.description,
+    },
   }
 }
 
