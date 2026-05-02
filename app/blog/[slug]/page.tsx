@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       tags: post.tags,
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title,
       description: post.description,
     },
