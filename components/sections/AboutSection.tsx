@@ -102,32 +102,11 @@ function Divider() {
   return <hr className="border-t border-[#E4E4E8] my-4" />
 }
 
-function Dot({ state }: { state: TimelineState }) {
-  if (state === 'active') {
-    return (
-      <div
-        className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0"
-        style={{ backgroundColor: '#0A0A0A' }}
-      />
-    )
-  }
-  if (state === 'highlighted') {
-    return (
-      <div
-        className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0"
-        style={{
-          backgroundColor: '#0A0A0A',
-          boxShadow: '0 0 0 2px #F7F7F9, 0 0 0 3.5px #0A0A0A',
-        }}
-      />
-    )
-  }
-  return (
-    <div
-      className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0 border-2"
-      style={{ backgroundColor: '#F7F7F9', borderColor: '#D4D4D8' }}
-    />
-  )
+const TAG_COLORS: Record<string, { bg: string; text: string }> = {
+  'Internship': { bg: '#EEF2FF', text: '#4060C8' },
+  'University': { bg: '#FFF4E6', text: '#C2651A' },
+  'Start-up':   { bg: '#F3EEFF', text: '#7248C8' },
+  'Part-time':  { bg: '#E6F7F5', text: '#1F8F82' },
 }
 
 interface AboutSectionProps {
@@ -213,153 +192,117 @@ export default function AboutSection({ data }: AboutSectionProps) {
                 100% { background-position:  200% center; }
               }
             `}</style>
-            <div className="timeline-scroll space-y-0 px-1 pb-5">
+            <div className="timeline-scroll space-y-0 pb-10">
               {data.timeline.map((item, i) => {
+                const isFirst       = i === 0
                 const isLast        = i === data.timeline.length - 1
                 const isExpanded    = expanded === item.id
                 const isActive      = item.state === 'active'
                 const isHighlighted = item.state === 'highlighted'
+                const isInactive    = item.state === 'inactive'
+                const pillStyle     = TAG_COLORS[item.tag ?? ''] ?? { bg: '#EDEDF0', text: '#6B6B6B' }
+                const cardBorderColor = item.accentColor ? hexToRgba(item.accentColor, 0.35) : '#E4E4E8'
+                const cardBgColor     = item.accentColor ? hexToRgba(item.accentColor, 0.06) : '#FFFFFF'
+                const DOT_CENTER = 15
 
                 return (
-                  <div key={item.id} className="flex gap-4">
+                  <div key={item.id} style={{ display: 'flex', gap: '14px' }}>
 
-                    {/* ── Dot + line ── */}
-                    <div className="flex flex-col items-center">
-                      <Dot state={item.state} />
-                      {!isLast && (
-                        <div
-                          className="w-px flex-1 my-1.5"
-                          style={{ backgroundColor: '#E4E4E8' }}
+                    {/* ── Continuous line + dot ── */}
+                    <div style={{ position: 'relative', width: 12, flexShrink: 0 }}>
+                      <div style={{
+                        position: 'absolute',
+                        left: '50%', transform: 'translateX(-50%)',
+                        width: 1, backgroundColor: '#E4E4E8',
+                        top: isFirst ? DOT_CENTER : 0,
+                        ...(isLast ? { height: DOT_CENTER } : { bottom: 0 }),
+                      }} />
+                      <svg width="8" height="8" viewBox="0 0 8 8"
+                        style={{ display: 'block', position: 'relative', zIndex: 1, marginTop: 11, marginLeft: 2 }}>
+                        <circle cx="4" cy="4"
+                          r={isInactive ? 2.5 : 3.5}
+                          fill={isInactive ? '#F7F7F9' : '#0A0A0A'}
+                          stroke={isInactive ? '#C8C8D0' : 'none'}
+                          strokeWidth={isInactive ? 1.5 : 0}
                         />
-                      )}
+                      </svg>
                     </div>
 
-                    {/* ── Content ── */}
-                    <div className={`flex-1 min-w-0 ${isLast ? 'pb-8' : 'pb-4'}`}>
+                    {/* ── Card ── */}
+                    <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? '2px' : '5px' }}>
 
-                      {isHighlighted ? (
-                        <div
-                          className="rounded-xl border cursor-pointer select-none"
-                          style={{
-                            backgroundColor: item.accentColor ? hexToRgba(item.accentColor, 0.06) : '#FFFFFF',
-                            borderColor: item.accentColor ? hexToRgba(item.accentColor, 0.35) : '#E4E4E8',
-                            padding: '10px 12px',
-                          }}
-                          onClick={() => setExpanded(isExpanded ? null : item.id)}
-                        >
-                          <div>
-                            <div className="flex items-center justify-between gap-2 mb-0.5">
-                              <div className="flex items-center gap-1.5 min-w-0">
-                                <p className="text-sm font-semibold text-[#0A0A0A] whitespace-pre-line">
-                                  {item.company}
-                                </p>
-                                <span
-                                  className="text-[9px] font-semibold rounded-full px-1.5 py-0.5 flex-shrink-0"
-                                  style={{
-                                    color: item.accentColor ?? '#6B6B6B',
-                                    backgroundColor: item.accentColor ? hexToRgba(item.accentColor, 0.12) : '#F0F0F3',
-                                  }}
-                                >
-                                  {item.badgeLabel ?? 'Key exp.'}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-1.5 flex-shrink-0">
-                                <span className="text-xs text-[#ABABAB] whitespace-nowrap">{item.period}</span>
-                                <svg
-                                  width="12" height="12" viewBox="0 0 24 24"
-                                  fill="none" stroke="#ABABAB" strokeWidth="2.5"
-                                  strokeLinecap="round" strokeLinejoin="round"
-                                  style={{
-                                    transition: 'transform 0.25s ease',
-                                    transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                                  }}
-                                >
-                                  <path d="M6 9l6 6 6-6" />
-                                </svg>
-                              </div>
-                            </div>
-                            <p className="text-xs text-[#6B6B6B]">{item.role}</p>
-                            <p className="text-xs text-[#ABABAB] mt-0.5 leading-relaxed">{item.description}</p>
-                          </div>
-
-                          <div
-                            style={{
-                              display: 'grid',
-                              gridTemplateRows: isExpanded ? '1fr' : '0fr',
-                              transition: 'grid-template-rows 0.25s ease',
-                            }}
-                          >
-                            <div style={{ overflow: 'hidden' }}>
-                              <hr className="border-t border-[#E4E4E8] mt-2.5 mb-2.5" />
-                              <p className="text-xs leading-relaxed" style={{ color: '#6B6B6B' }}>
-                                {item.detail}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                      ) : isActive ? (
+                      {isActive ? (
                         <div style={{ position: 'relative', borderRadius: '12px', padding: '1px', overflow: 'hidden' }}>
                           <div style={{
-                            position: 'absolute',
-                            width: '300%', height: '300%',
-                            top: '-100%', left: '-100%',
+                            position: 'absolute', width: '300%', height: '300%', top: '-100%', left: '-100%',
                             background: 'conic-gradient(from 0deg, #F2502260, #FFB90060, #7FBA0060, #00A4EF60, #F2502260)',
                             animation: 'ms-border-spin 6s linear infinite',
                           }} />
-                          <div style={{
-                            position: 'relative',
-                            borderRadius: '10.5px',
-                            padding: '10px 12px',
-                            background: '#ffffff',
-                            overflow: 'hidden',
-                          }}>
+                          <div style={{ position: 'relative', borderRadius: '10.5px', padding: '8px 12px', background: '#ffffff', overflow: 'hidden', cursor: 'pointer' }}
+                            onClick={() => setExpanded(isExpanded ? null : item.id)}>
                             <NeuralNetworkCanvas />
                             <div style={{ position: 'relative' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '2px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
-                                  <p style={{ fontSize: '14px', fontWeight: 600, color: '#0A0A0A', margin: 0 }}>
-                                    {item.company}
-                                  </p>
-                                  <span style={{
-                                    fontSize: '10px', fontWeight: 600, flexShrink: 0,
-                                    color: '#3A7D44', backgroundColor: '#EDFAF1',
-                                    borderRadius: '9999px', padding: '1px 6px',
-                                  }}>
-                                    Now
-                                  </span>
-                                  {item.href && (
-                                    <ExternalLinkButton
-                                      href={item.href}
-                                      size={20}
-                                      bg="rgba(0,0,0,0.06)"
-                                      color="#6B6B6B"
-                                      hoverBg="rgba(0,0,0,0.12)"
-                                    />
-                                  )}
-                                </div>
-                                <span style={{ fontSize: '12px', color: '#ABABAB', whiteSpace: 'nowrap', flexShrink: 0 }}>
-                                  {item.period}
-                                </span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+                                <span style={{ fontSize: '14px', fontWeight: 600, color: '#0A0A0A' }}>{item.company}</span>
+                                <span style={{ fontSize: '9px', fontWeight: 600, color: '#3A7D44', backgroundColor: '#EDFAF1', borderRadius: '9999px', padding: '2px 6px', flexShrink: 0 }}>Now</span>
+                                {item.tag && <span style={{ fontSize: '9px', fontWeight: 600, color: pillStyle.text, backgroundColor: pillStyle.bg, borderRadius: '9999px', padding: '2px 6px', flexShrink: 0 }}>{item.tag}</span>}
+                                {item.href && <ExternalLinkButton href={item.href} size={20} bg="rgba(0,0,0,0.06)" color="#6B6B6B" hoverBg="rgba(0,0,0,0.12)" onClick={e => e.stopPropagation()} />}
+                                <span style={{ fontSize: '11px', color: '#ABABAB', marginLeft: 'auto', whiteSpace: 'nowrap', flexShrink: 0 }}>{item.period}</span>
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ABABAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                                  style={{ transition: 'transform 0.25s ease', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }}>
+                                  <path d="M6 9l6 6 6-6" />
+                                </svg>
                               </div>
-                              <p style={{ fontSize: '12px', color: '#6B6B6B', margin: 0 }}>{item.role}</p>
-                              <p style={{ fontSize: '12px', color: '#ABABAB', marginTop: '2px', lineHeight: '1.5' }}>{item.description}</p>
+                              <p style={{ fontSize: '12px', color: '#6B6B6B', margin: '0 0 2px' }}>{item.role}</p>
+                              <p style={{ fontSize: '12px', color: '#ABABAB', margin: 0, lineHeight: 1.5 }}>{item.description}</p>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateRows: isExpanded ? '1fr' : '0fr', transition: 'grid-template-rows 0.25s ease' }}>
+                              <div style={{ overflow: 'hidden' }}>
+                                <hr style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.07)', margin: '8px 0' }} />
+                                <p style={{ fontSize: '12px', color: '#6B6B6B', lineHeight: 1.6, margin: 0 }}>{item.detail ?? item.description}</p>
+                              </div>
                             </div>
                           </div>
                         </div>
 
                       ) : (
-                        <div>
-                          <div className="flex items-center justify-between gap-2 mb-0.5">
-                            <p className="text-sm font-semibold whitespace-pre-line" style={{ color: '#7A7A7A' }}>
-                              {item.company}
-                            </p>
-                            <span className="text-xs whitespace-nowrap flex-shrink-0" style={{ color: '#C0C0C6' }}>
-                              {item.period}
-                            </span>
+                        <div
+                          style={{
+                            borderRadius: '12px',
+                            border: `1px solid ${isHighlighted ? cardBorderColor : '#E4E4E8'}`,
+                            backgroundColor: isHighlighted ? cardBgColor : '#FFFFFF',
+                            padding: '8px 12px',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => setExpanded(isExpanded ? null : item.id)}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+                            <span style={{ fontSize: '14px', fontWeight: 600, color: '#0A0A0A' }}>{item.company}</span>
+                            {item.tag && <span style={{ fontSize: '9px', fontWeight: 600, color: pillStyle.text, backgroundColor: pillStyle.bg, borderRadius: '9999px', padding: '2px 6px', flexShrink: 0 }}>{item.tag}</span>}
+                            {item.href && <ExternalLinkButton href={item.href} size={20} bg="rgba(0,0,0,0.06)" color="#6B6B6B" hoverBg="rgba(0,0,0,0.12)" onClick={e => e.stopPropagation()} />}
+                            <span style={{ fontSize: '11px', color: '#ABABAB', marginLeft: 'auto', whiteSpace: 'nowrap', flexShrink: 0 }}>{item.period}</span>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ABABAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                              style={{ transition: 'transform 0.25s ease', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }}>
+                              <path d="M6 9l6 6 6-6" />
+                            </svg>
                           </div>
-                          <p className="text-xs" style={{ color: '#9A9A9A' }}>{item.role}</p>
-                          <p className="text-xs mt-0.5 leading-relaxed" style={{ color: '#C0C0C6' }}>{item.description}</p>
+                          <p style={{ fontSize: '12px', color: '#6B6B6B', margin: 0 }}>{item.role}</p>
+                          {isHighlighted && (
+                            <div style={{ display: 'grid', gridTemplateRows: isExpanded ? '1fr' : '0fr', transition: 'grid-template-rows 0.25s ease' }}>
+                              <div style={{ overflow: 'hidden' }}>
+                                <hr style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.07)', margin: '8px 0' }} />
+                                <p style={{ fontSize: '12px', color: '#6B6B6B', lineHeight: 1.6, margin: 0 }}>{item.detail ?? item.description}</p>
+                              </div>
+                            </div>
+                          )}
+                          {isInactive && (
+                            <div style={{ display: 'grid', gridTemplateRows: isExpanded ? '1fr' : '0fr', transition: 'grid-template-rows 0.25s ease' }}>
+                              <div style={{ overflow: 'hidden' }}>
+                                <hr style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.07)', margin: '8px 0' }} />
+                                <p style={{ fontSize: '12px', color: '#6B6B6B', lineHeight: 1.6, margin: 0 }}>{item.description}</p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

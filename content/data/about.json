@@ -26,6 +26,7 @@
       "description": "Working on AI-driven products in the MSAI team",
       "period": "Summer 2026",
       "state": "active",
+      "tag": "Internship",
       "href": "/blog/microsoft-product-manager-intern",
       "learning": "Vibecoding and using Claude!",
       "location": "London, United Kingdom",
@@ -38,7 +39,8 @@
       "role": "Pricing Strategy Analyst Intern",
       "description": "Working on pricing CPU strategies.",
       "period": "Sep '25 – Jul '26",
-      "state": "inactive"
+      "state": "inactive",
+      "tag": "Internship"
     },
     {
       "id": "tiktok",
@@ -46,7 +48,8 @@
       "role": "Merchant Strategy & Operations Intern",
       "description": "Worked on strategic growth for merchants.",
       "period": "Jun – Sep '25",
-      "state": "inactive"
+      "state": "inactive",
+      "tag": "Internship"
     },
     {
       "id": "amazon",
@@ -54,7 +57,8 @@
       "role": "Program Manager Intern",
       "description": "Worked on improving carrier rail compliance.",
       "period": "Feb – Jun '25",
-      "state": "inactive"
+      "state": "inactive",
+      "tag": "Internship"
     },
     {
       "id": "spotify",
@@ -63,6 +67,7 @@
       "description": "Worked on AI features for users.",
       "period": "Jun – Aug '24",
       "state": "highlighted",
+      "tag": "Internship",
       "badgeLabel": "Key exp.",
       "detail": "WIP — add detail about what you shipped, your impact, and the team you worked with."
     },
@@ -73,6 +78,7 @@
       "description": "Expected to achieve a first class degree.",
       "period": "2023 – 2027",
       "state": "highlighted",
+      "tag": "University",
       "badgeLabel": "University",
       "accentColor": "#E87722",
       "detail": "WIP — add society roles, leadership positions, sports teams, and other campus activities here.",
@@ -84,7 +90,8 @@
       "role": "Product Manager, Reader Experience",
       "description": "Spearheaded improvements to the reader experience.",
       "period": "May '21 – Jun '24",
-      "state": "inactive"
+      "state": "inactive",
+      "tag": "Part-time"
     },
     {
       "id": "catmanga",
@@ -93,6 +100,7 @@
       "description": "Founded a non-profit localisation group.",
       "period": "Jun '19 – Nov '21",
       "state": "highlighted",
+      "tag": "Start-up",
       "badgeLabel": "Key exp.",
       "detail": "Grew the team to over 50 members, and launched a fan publishing platform which localised over 60 Japanese comics, generating over 35 million monthly page views."
     }

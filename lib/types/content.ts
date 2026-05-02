@@ -22,6 +22,7 @@ export interface TimelineEntry {
   description: string
   period: string
   state: TimelineState
+  tag?: string
   badgeLabel?: string
   detail?: string
   href?: string
