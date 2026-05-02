@@ -12,14 +12,7 @@ const COMPANY: Record<string, { color: string; bg: string; border: string }> = {
 }
 
 function MsLogo() {
-  return (
-    <span className="grid grid-cols-2 gap-[2px] w-3 h-3 flex-shrink-0 inline-grid">
-      <span style={{ backgroundColor: '#F25022', borderRadius: 1 }} />
-      <span style={{ backgroundColor: '#7FBA00', borderRadius: 1 }} />
-      <span style={{ backgroundColor: '#00A4EF', borderRadius: 1 }} />
-      <span style={{ backgroundColor: '#FFB900', borderRadius: 1 }} />
-    </span>
-  )
+  return <img src="/logos/microsoft.svg" alt="Microsoft" width={12} height={12} className="flex-shrink-0" />
 }
 
 /* ── Main component ─────────────────────────────────── */
